@@ -83,6 +83,7 @@ Plans:
 ### Phase 3: Monitoring, Alerts, Lifecycle, and Audit
 
 **Goal**: A P-1042 deterioration produces an honest, prioritized, deduplicated alert that can be recovered after realtime disruption and reconstructed through an ordered audit trail.
+**Planned:** 2026-08-24
 **Mode**: mvp
 **Depends on**: Phase 2
 **Requirements**: ALRT-01, ALRT-02, ALRT-03, ALRT-04, ALRT-05, AUDT-01, REAL-01, REAL-02
@@ -95,7 +96,7 @@ Plans:
   5. A disconnected, stale, loading, unavailable-fallback, or no-candidate operational state is visible, and a page reload or WebSocket reconnect recovers authoritative state through REST.
 
 **Rationale**: The core value is a traceable deterioration-to-resolution workflow; lifecycle correctness, freshness, and audit persistence must be established before dispatch actions are layered on top.
-**Plans**: 4 plans
+**Plans:** 4 plans revised 2026-08-24
 Plans:
 
 - [ ] 03-01-PLAN.md - Threshold-backed alert persistence and deduplication
@@ -148,7 +149,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Safety, Simulation, and Backend Contracts | 6/6 | Complete    | 2026-08-24 |
 | 2. Identity, Authorization, and Prediction Adapter | 8/8 | Executed with verification blockers | 2026-08-24 |
-| 3. Monitoring, Alerts, Lifecycle, and Audit | 0/TBD | Not started | - |
+| 3. Monitoring, Alerts, Lifecycle, and Audit | 0/4 | Planned | 2026-08-24 |
 | 4. Medical Historian and Human-Confirmed Dispatch | 0/TBD | Not started | - |
 | 5. End-to-End Verification and Demo Hardening | 0/TBD | Not started | - |
 
