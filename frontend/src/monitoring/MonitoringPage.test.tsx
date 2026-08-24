@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MonitoringPage } from "./MonitoringPage";
 import type { VitalObservation } from "../contracts/vitals";
@@ -73,8 +73,9 @@ describe("MonitoringPage", () => {
 
   it("renders exactly the server-configured refresh options", async () => {
     render(<MonitoringPage observation={observation} />);
+    await act(async () => { await Promise.resolve(); await Promise.resolve(); });
 
-    expect(await screen.findByRole("combobox", { name: /refresh interval/i })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: /refresh interval/i })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "5 seconds" })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "10 seconds" })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "30 seconds" })).toBeInTheDocument();
@@ -85,11 +86,16 @@ describe("MonitoringPage", () => {
   it("advances before reading current data for manual refresh", async () => {
     const fetchMock = vi.mocked(fetch);
     render(<MonitoringPage observation={observation} />);
-    await screen.findByRole("combobox", { name: /refresh interval/i });
+    await act(async () => { await Promise.resolve(); await Promise.resolve(); });
 
-    fireEvent.click(screen.getByRole("button", { name: /refresh now/i }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: /refresh now/i }));
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(fetchMock.mock.calls[1][0]).toMatch(/vitals\/advance$/);
     expect(fetchMock.mock.calls[2][0]).toMatch(/vitals\/current$/);
   });
@@ -97,11 +103,16 @@ describe("MonitoringPage", () => {
   it("advances on the configured interval and clears the timer when unmounted", async () => {
     const fetchMock = vi.mocked(fetch);
     const { unmount } = render(<MonitoringPage observation={observation} />);
-    await screen.findByRole("combobox", { name: /refresh interval/i });
+    await act(async () => { await Promise.resolve(); await Promise.resolve(); });
     fireEvent.change(screen.getByRole("combobox", { name: /refresh interval/i }), { target: { value: "5" } });
 
-    await vi.advanceTimersByTimeAsync(5000);
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5000);
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(fetchMock.mock.calls[1][0]).toMatch(/vitals\/advance$/);
     expect(fetchMock.mock.calls[2][0]).toMatch(/vitals\/current$/);
 

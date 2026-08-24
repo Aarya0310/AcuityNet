@@ -1,6 +1,9 @@
+import { useEffect, useRef, useState } from "react";
 import type { FreshnessState, VitalObservation } from "../contracts/vitals";
-
-const PROTOTYPE_LABEL = "Simulated ICU environment - research prototype - not for clinical use";
+import type { AutomaticRefreshInterval, RefreshConfiguration, RefreshInterval } from "../contracts/configuration";
+import { advanceVitals, getCurrentVitals, getRefreshConfiguration } from "../api/client";
+import { ProvenanceBadge } from "../safety/ProvenanceBadge";
+import { PrototypeBanner } from "../safety/PrototypeBanner";
 
 const stateCopy: Record<FreshnessState, { label: string; detail: string }> = {
   fresh: { label: "Feed current", detail: "Server reports a recent synthetic observation." },
@@ -19,7 +22,46 @@ function formatTimestamp(value: string): string {
 }
 
 export function MonitoringPage({ observation, freshnessOverride }: MonitoringPageProps) {
-  const freshness = freshnessOverride ?? observation?.freshness ?? "unavailable";
+  const [currentObservation, setCurrentObservation] = useState(observation);
+  const [configuration, setConfiguration] = useState<RefreshConfiguration>();
+  const [selectedInterval, setSelectedInterval] = useState<RefreshInterval>();
+  const refreshInFlight = useRef(false);
+  const patientId = observation?.patient_id ?? "P-1042";
+
+  useEffect(() => setCurrentObservation(observation), [observation]);
+
+  useEffect(() => {
+    let active = true;
+    getRefreshConfiguration().then((value) => {
+      if (active) {
+        setConfiguration(value);
+        setSelectedInterval(value.default_interval);
+      }
+    }).catch(() => {
+      if (active) setSelectedInterval("manual");
+    });
+    return () => { active = false; };
+  }, []);
+
+  const refresh = async (interval: AutomaticRefreshInterval) => {
+    if (refreshInFlight.current) return;
+    refreshInFlight.current = true;
+    try {
+      await advanceVitals(patientId, interval);
+      setCurrentObservation(await getCurrentVitals(patientId));
+    } finally {
+      refreshInFlight.current = false;
+    }
+  };
+
+  useEffect(() => {
+    if (!selectedInterval || selectedInterval === "manual") return;
+    const timer = window.setInterval(() => { void refresh(selectedInterval); }, selectedInterval * 1000);
+    return () => window.clearInterval(timer);
+  }, [selectedInterval, patientId]);
+
+  const displayedObservation = currentObservation;
+  const freshness = freshnessOverride ?? displayedObservation?.freshness ?? "unavailable";
   const state = stateCopy[freshness];
 
   return (
@@ -37,33 +79,47 @@ export function MonitoringPage({ observation, freshnessOverride }: MonitoringPag
         </div>
       </header>
 
-      <div className="prototype-banner" role="note">{PROTOTYPE_LABEL}</div>
+      <PrototypeBanner />
 
-      {observation ? (
+      <section className="refresh-controls" aria-label="Refresh controls">
+        <label htmlFor="refresh-interval">Refresh interval</label>
+        <select
+          id="refresh-interval"
+          aria-label="Refresh interval"
+          value={selectedInterval ?? ""}
+          disabled={!configuration}
+          onChange={(event) => setSelectedInterval(event.target.value === "manual" ? "manual" : Number(event.target.value) as AutomaticRefreshInterval)}
+        >
+          {(configuration?.supported_intervals ?? []).map((interval) => (
+            <option key={interval} value={interval}>
+              {interval === "manual" ? "Manual" : `${interval} seconds`}
+            </option>
+          ))}
+        </select>
+        <button type="button" onClick={() => void refresh(selectedInterval === "manual" ? configuration?.default_interval ?? 10 : selectedInterval ?? 10)}>
+          Refresh now
+        </button>
+      </section>
+
+      {displayedObservation ? (
         <>
           <section className="context-strip" aria-label="Patient context">
-            <div><span>Bed</span><strong>{observation.bed_id}</strong></div>
-            <div><span>Unit</span><strong>{observation.unit}</strong></div>
-            <div><span>Observation</span><strong>{formatTimestamp(observation.observed_at)} UTC</strong></div>
-            <div><span>Received</span><strong>{formatTimestamp(observation.received_at)} UTC</strong></div>
+            <div><span>Bed</span><strong>{displayedObservation.bed_id}</strong></div>
+            <div><span>Unit</span><strong>{displayedObservation.unit}</strong></div>
+            <div><span>Observation</span><strong>{formatTimestamp(displayedObservation.observed_at)} UTC</strong></div>
+            <div><span>Received</span><strong>{formatTimestamp(displayedObservation.received_at)} UTC</strong></div>
           </section>
 
           <section className="vitals-grid" aria-label="Current synthetic vitals">
-            <VitalCard label="SpO2" value={`${observation.spo2_percent} %`} />
-            <VitalCard label="Heart rate" value={`${observation.heart_rate_bpm} bpm`} />
-            <VitalCard label="Respiratory rate" value={`${observation.respiratory_rate_bpm} /min`} />
-            <VitalCard label="Systolic BP" value={`${observation.systolic_bp_mmhg} mmHg`} />
-            <VitalCard label="Diastolic BP" value={`${observation.diastolic_bp_mmhg} mmHg`} />
-            <VitalCard label="Temperature" value={`${observation.temperature_c} C`} />
+            <VitalCard label="SpO2" value={`${displayedObservation.spo2_percent} %`} />
+            <VitalCard label="Heart rate" value={`${displayedObservation.heart_rate_bpm} bpm`} />
+            <VitalCard label="Respiratory rate" value={`${displayedObservation.respiratory_rate_bpm} /min`} />
+            <VitalCard label="Systolic BP" value={`${displayedObservation.systolic_bp_mmhg} mmHg`} />
+            <VitalCard label="Diastolic BP" value={`${displayedObservation.diastolic_bp_mmhg} mmHg`} />
+            <VitalCard label="Temperature" value={`${displayedObservation.temperature_c} C`} />
           </section>
 
-          <footer className="provenance">
-            <span>Sequence: {observation.sequence}</span>
-            <span>Source: {observation.provenance.source_name}</span>
-            <span>Scenario: {observation.provenance.scenario_id} v{observation.provenance.scenario_version}</span>
-            <span>Live bedside feed: {observation.provenance.is_live_bedside_feed ? "yes" : "no"}</span>
-            <span>Server label: {observation.prototype_label}</span>
-          </footer>
+          <ProvenanceBadge sequence={displayedObservation.sequence} provenance={displayedObservation.provenance} prototypeLabel={displayedObservation.prototype_label} />
         </>
       ) : (
         <section className="empty-state" aria-label="Unavailable observation">
