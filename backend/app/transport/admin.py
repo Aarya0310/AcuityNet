@@ -4,7 +4,7 @@ from backend.app.admin.configuration import update_typed_configuration
 from backend.app.admin.kpis import get_admin_kpis
 from backend.app.admin.repository import list_beds, list_prototype_users, update_bed, update_nurse_status
 from backend.app.contracts.admin import AdminKpiResponse, UserCreateRequest, UserResponse
-from backend.app.contracts.configuration import RefreshSettingsUpdate, ResearchRulesUpdate, RiskThresholdsUpdate
+from backend.app.contracts.configuration import AlertConfigurationResponse, RefreshSettingsUpdate, ResearchRulesUpdate, RiskThresholdsUpdate
 from backend.app.persistence.models import Bed, Nurse, User
 from backend.app.seed.demo_data import password_digest
 
@@ -29,12 +29,20 @@ def admin_router(sessions, current_user):
     @router.get("/kpis", response_model=AdminKpiResponse)
     def kpis(_=Depends(admin)):
         with sessions() as s: return get_admin_kpis(s)
-    @router.patch("/configuration/risk-thresholds")
+    @router.patch("/configuration/risk-thresholds", response_model=AlertConfigurationResponse)
     def thresholds(request: RiskThresholdsUpdate, _=Depends(admin)):
-        with sessions.begin() as s: return update_typed_configuration(s, request.model_dump())
-    @router.patch("/configuration/research-rules")
+        with sessions.begin() as s:
+            try:
+                values = update_typed_configuration(s, request.model_dump())
+                return AlertConfigurationResponse.model_validate({key: values[key] for key in AlertConfigurationResponse.model_fields})
+            except ValueError as error: raise HTTPException(status_code=422, detail=str(error)) from error
+    @router.patch("/configuration/research-rules", response_model=AlertConfigurationResponse)
     def rules(request: ResearchRulesUpdate, _=Depends(admin)):
-        with sessions.begin() as s: return update_typed_configuration(s, request.model_dump())
+        with sessions.begin() as s:
+            try:
+                values = update_typed_configuration(s, request.model_dump())
+                return AlertConfigurationResponse.model_validate({key: values[key] for key in AlertConfigurationResponse.model_fields})
+            except ValueError as error: raise HTTPException(status_code=422, detail=str(error)) from error
     @router.patch("/configuration/refresh")
     def refresh(request: RefreshSettingsUpdate, _=Depends(admin)):
         return request

@@ -15,7 +15,7 @@ from backend.app.contracts.vitals import (
     resolve_freshness,
 )
 from backend.app.persistence.database import make_engine, migrate_database, session_factory
-from backend.app.persistence.models import Bed, Patient, VitalObservation
+from backend.app.persistence.models import Alert, Bed, Patient, VitalObservation
 from backend.app.transport.configuration import refresh_configuration
 from backend.app.transport.health import health_response
 from backend.app.seed.demo_data import seed_demo_data
@@ -31,6 +31,8 @@ from backend.app.auth.policy import get_current_user, require_patient_access, re
 from backend.app.prediction.adapter import PredictionAdapter
 from backend.app.transport.predictions import prediction_router
 from backend.app.transport.admin import admin_router
+from backend.app.alerts.service import AlertService
+from backend.app.transport.alerts import alert_router
 
 
 def create_app(
@@ -44,6 +46,7 @@ def create_app(
         seed_demo_data(session)
     observation_service = ObservationService(P1042Scenario())
     now = clock or (lambda: datetime.now(timezone.utc))
+    alert_service = AlertService(PredictionAdapter(), now)
 
     app = FastAPI(title="AcuityNet Research Prototype")
     app.include_router(auth_router(sessions))
@@ -98,6 +101,7 @@ def create_app(
 
     app.include_router(prediction_router(sessions, current_user, response_for, PredictionAdapter()))
     app.include_router(admin_router(sessions, current_user))
+    app.include_router(alert_router(sessions, current_user, alert_service))
 
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:
@@ -137,7 +141,9 @@ def create_app(
             bed = session.get(Bed, row.bed_id)
             if patient is None or bed is None:
                 raise HTTPException(status_code=404, detail="Patient context unavailable")
-            return response_for(row, patient, bed)
+            vitals = response_for(row, patient, bed)
+            alert_service.evaluate_prediction(session, row, vitals)
+            return vitals
 
     @app.get("/api/v1/patients/{patient_id}/vitals/current", response_model=VitalObservationResponse)
     def current(patient_id: str, user=Depends(current_user)):

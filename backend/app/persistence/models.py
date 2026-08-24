@@ -80,3 +80,65 @@ class VitalObservation(Base):
     source_name: Mapped[str] = mapped_column(String(80), nullable=False)
     scenario_id: Mapped[str] = mapped_column(String(80), nullable=False)
     scenario_version: Mapped[str] = mapped_column(String(20), nullable=False)
+
+
+class PredictionEvidence(Base):
+    __tablename__ = "prediction_evidence"
+    evidence_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
+    observation_id: Mapped[int] = mapped_column(ForeignKey("vital_observations.observation_id"), nullable=False, unique=True)
+    observation_sequence: Mapped[int] = mapped_column(Integer, nullable=False)
+    score: Mapped[float] = mapped_column(Float, nullable=False)
+    event: Mapped[str] = mapped_column(String(120), nullable=False)
+    level: Mapped[str] = mapped_column(String(16), nullable=False)
+    probability: Mapped[float] = mapped_column(Float, nullable=False)
+    horizon_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
+    source_kind: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_version: Mapped[str] = mapped_column(String(40), nullable=False)
+    fallback_reason: Mapped[str | None] = mapped_column(String(200))
+    fallback_metadata: Mapped[str] = mapped_column(String(500), nullable=False, default="{}")
+    prediction_contract_version: Mapped[str] = mapped_column(String(40), nullable=False)
+    synthetic_source_kind: Mapped[str] = mapped_column(String(32), nullable=False)
+    synthetic_source_name: Mapped[str] = mapped_column(String(80), nullable=False)
+    synthetic_scenario_id: Mapped[str] = mapped_column(String(80), nullable=False)
+    synthetic_scenario_version: Mapped[str] = mapped_column(String(20), nullable=False)
+    prototype_label: Mapped[str] = mapped_column(String(160), nullable=False)
+    effective_threshold: Mapped[float] = mapped_column(Float, nullable=False)
+    rule_version: Mapped[str] = mapped_column(String(40), nullable=False)
+    server_timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class Alert(Base):
+    __tablename__ = "alerts"
+    __table_args__ = (UniqueConstraint("patient_id", "episode_key", name="uq_alert_patient_episode"),)
+    alert_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
+    bed_id: Mapped[str] = mapped_column(ForeignKey("beds.bed_id"), nullable=False)
+    episode_key: Mapped[str] = mapped_column(String(80), nullable=False)
+    state: Mapped[str] = mapped_column(String(20), nullable=False, default="generated")
+    priority: Mapped[str] = mapped_column(String(16), nullable=False)
+    evidence_id: Mapped[int] = mapped_column(ForeignKey("prediction_evidence.evidence_id"), nullable=False)
+    deduplication_status: Mapped[str] = mapped_column(String(24), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class AlertEvent(Base):
+    __tablename__ = "alert_events"
+    event_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    alert_id: Mapped[int] = mapped_column(ForeignKey("alerts.alert_id"), nullable=False)
+    state: Mapped[str] = mapped_column(String(20), nullable=False)
+    outcome: Mapped[str] = mapped_column(String(24), nullable=False)
+    occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class AuditEvent(Base):
+    __tablename__ = "audit_events"
+    audit_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    actor_id: Mapped[str | None] = mapped_column(ForeignKey("users.user_id"))
+    action: Mapped[str] = mapped_column(String(80), nullable=False)
+    resource_type: Mapped[str] = mapped_column(String(40), nullable=False)
+    resource_id: Mapped[str | None] = mapped_column(String(80))
+    outcome: Mapped[str] = mapped_column(String(24), nullable=False)
+    occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    details: Mapped[str] = mapped_column(String(1000), nullable=False, default="{}")

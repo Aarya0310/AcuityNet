@@ -25,3 +25,16 @@ class RiskThresholdsUpdate(BaseModel):
 class ResearchRulesUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
     research_rules_version: str = Field(min_length=1, max_length=40)
+
+
+class AlertConfiguration(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    critical_risk_threshold: float = Field(ge=0, le=1)
+    high_risk_threshold: float = Field(ge=0, le=1)
+    alert_rearm_threshold: float = Field(ge=0, le=1)
+    alert_cooldown_seconds: int = Field(ge=0, le=86400)
+    research_rules_version: str = Field(min_length=1, max_length=40)
+
+
+class AlertConfigurationResponse(AlertConfiguration):
+    pass

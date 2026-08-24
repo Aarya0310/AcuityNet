@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 
 from backend.app.auth.policy import require_patient_access, require_nurse_assignment
+from backend.app.admin.configuration import effective_settings
 from backend.app.contracts.predictions import PredictionResponse
 from backend.app.persistence.models import Bed, Patient, VitalObservation
 
@@ -19,6 +20,6 @@ def prediction_router(sessions, current_user, vitals_response, adapter) -> APIRo
                 raise HTTPException(status_code=404, detail="No observation available")
             patient, bed = session.get(Patient, patient_id), session.get(Bed, row.bed_id)
             vitals = vitals_response(row, patient, bed)
-            return adapter.predict(row, vitals)
+            return adapter.predict(row, vitals, effective_settings(session))
 
     return router
