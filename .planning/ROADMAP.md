@@ -95,7 +95,13 @@ Plans:
   5. A disconnected, stale, loading, unavailable-fallback, or no-candidate operational state is visible, and a page reload or WebSocket reconnect recovers authoritative state through REST.
 
 **Rationale**: The core value is a traceable deterioration-to-resolution workflow; lifecycle correctness, freshness, and audit persistence must be established before dispatch actions are layered on top.
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+
+- [ ] 03-01-PLAN.md - Threshold-backed alert persistence and deduplication
+- [ ] 03-02-PLAN.md - Validated alert lifecycle and ordered audit evidence
+- [ ] 03-03-PLAN.md - REST-authoritative realtime recovery and honest operational UI
+- [ ] 03-04-PLAN.md - Reset/reseed, integration proof, and secret-safe smoke verification
 **UI hint**: yes
 
 ### Phase 4: Medical Historian and Human-Confirmed Dispatch
