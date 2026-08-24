@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from fastapi import FastAPI, HTTPException
 from sqlalchemy import select
 
+from backend.app.contracts.configuration import RefreshConfiguration
 from backend.app.contracts.patients import PatientSummary
 from backend.app.contracts.vitals import (
     AdvanceRequest,
@@ -13,6 +14,7 @@ from backend.app.contracts.vitals import (
 )
 from backend.app.persistence.database import make_engine, migrate_database, session_factory
 from backend.app.persistence.models import Bed, Patient, VitalObservation
+from backend.app.transport.configuration import refresh_configuration
 from backend.app.seed.demo_data import seed_demo_data
 from backend.app.vitals.scenario import P1042Scenario
 from backend.app.vitals.service import ObservationService
@@ -39,6 +41,12 @@ def create_app(
         patient: Patient,
         bed: Bed,
     ) -> VitalObservationResponse:
+        observed_at = row.observed_at
+        received_at = row.received_at
+        if observed_at.tzinfo is None:
+            observed_at = observed_at.replace(tzinfo=timezone.utc)
+        if received_at.tzinfo is None:
+            received_at = received_at.replace(tzinfo=timezone.utc)
         return VitalObservationResponse(
             patient_id=row.patient_id,
             patient=PatientSummary(
@@ -50,8 +58,8 @@ def create_app(
             bed_id=row.bed_id,
             unit=bed.unit,
             sequence=row.sequence,
-            observed_at=row.observed_at,
-            received_at=row.received_at,
+            observed_at=observed_at,
+            received_at=received_at,
             spo2_percent=row.spo2_percent,
             heart_rate_bpm=row.heart_rate_bpm,
             respiratory_rate_bpm=row.respiratory_rate_bpm,
@@ -73,13 +81,36 @@ def create_app(
     def health():
         return {"status": "ok"}
 
+    @app.get(
+        "/api/v1/configuration/refresh",
+        response_model=RefreshConfiguration,
+    )
+    @app.get("/api/v1/configuration", response_model=RefreshConfiguration)
+    def configuration():
+        with sessions() as session:
+            try:
+                return refresh_configuration(session)
+            except ValueError as error:
+                raise HTTPException(status_code=500, detail=str(error)) from error
+
     @app.post("/api/v1/patients/{patient_id}/vitals/advance", response_model=VitalObservationResponse)
     def advance(patient_id: str, request: AdvanceRequest):
         if patient_id != "P-1042":
             raise HTTPException(status_code=404, detail="Patient not found")
         with sessions.begin() as session:
             timestamp = now()
-            row = observation_service.advance(session, patient_id, request.tick, timestamp)
+            tick = request.tick
+            if tick is None:
+                latest = session.scalar(
+                    select(VitalObservation)
+                    .where(VitalObservation.patient_id == patient_id)
+                    .order_by(VitalObservation.sequence.desc())
+                )
+                tick = 0 if latest is None else latest.sequence + 1
+            try:
+                row = observation_service.advance(session, patient_id, tick, timestamp)
+            except ValueError as error:
+                raise HTTPException(status_code=422, detail=str(error)) from error
             patient = session.get(Patient, row.patient_id)
             bed = session.get(Bed, row.bed_id)
             if patient is None or bed is None:

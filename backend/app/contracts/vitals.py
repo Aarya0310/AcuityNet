@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from backend.app.contracts.patients import PatientSummary
 
@@ -31,7 +31,19 @@ class SyntheticProvenance(BaseModel):
 
 
 class AdvanceRequest(BaseModel):
-    tick: int = Field(ge=0, le=4)
+    model_config = ConfigDict(extra="forbid")
+
+    tick: int | None = Field(default=None, ge=0, le=4)
+    interval: int | str | None = None
+
+    @model_validator(mode="after")
+    def require_bounded_operation(self) -> "AdvanceRequest":
+        supported = (5, 10, 30)
+        if self.tick is None and self.interval not in supported:
+            raise ValueError("Automatic advancement requires interval 5, 10, or 30")
+        if self.tick is not None and self.interval not in (None, *supported):
+            raise ValueError("Unsupported refresh interval")
+        return self
 
 
 class VitalObservationResponse(BaseModel):
