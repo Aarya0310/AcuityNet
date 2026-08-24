@@ -1,5 +1,5 @@
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MonitoringPage } from "./MonitoringPage";
 import type { VitalObservation } from "../contracts/vitals";
 
@@ -30,7 +30,29 @@ const observation: VitalObservation = {
 
 afterEach(cleanup);
 
+function response(body: unknown) {
+  return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(body) });
+}
+
 describe("MonitoringPage", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.stubGlobal("fetch", vi.fn((url: string) => {
+      if (url.endsWith("/api/v1/configuration")) {
+        return response({ supported_intervals: [5, 10, 30, "manual"], default_interval: 10 });
+      }
+      if (url.endsWith("/vitals/advance")) {
+        return response(observation);
+      }
+      return response(observation);
+    }));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
   it("renders P-1042 context, six vitals, timestamps, and safety metadata", () => {
     render(<MonitoringPage observation={observation} />);
 
@@ -47,6 +69,45 @@ describe("MonitoringPage", () => {
     expect(screen.getByText(/acuitynet-simulator/)).toBeInTheDocument();
     expect(screen.getByText("Feed current")).toBeInTheDocument();
     expect(screen.getByText("Simulated ICU environment - research prototype - not for clinical use")).toBeInTheDocument();
+  });
+
+  it("renders exactly the server-configured refresh options", async () => {
+    render(<MonitoringPage observation={observation} />);
+
+    expect(await screen.findByRole("combobox", { name: /refresh interval/i })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "5 seconds" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "10 seconds" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "30 seconds" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Manual" })).toBeInTheDocument();
+    expect(screen.getAllByRole("option")).toHaveLength(4);
+  });
+
+  it("advances before reading current data for manual refresh", async () => {
+    const fetchMock = vi.mocked(fetch);
+    render(<MonitoringPage observation={observation} />);
+    await screen.findByRole("combobox", { name: /refresh interval/i });
+
+    fireEvent.click(screen.getByRole("button", { name: /refresh now/i }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    expect(fetchMock.mock.calls[1][0]).toMatch(/vitals\/advance$/);
+    expect(fetchMock.mock.calls[2][0]).toMatch(/vitals\/current$/);
+  });
+
+  it("advances on the configured interval and clears the timer when unmounted", async () => {
+    const fetchMock = vi.mocked(fetch);
+    const { unmount } = render(<MonitoringPage observation={observation} />);
+    await screen.findByRole("combobox", { name: /refresh interval/i });
+    fireEvent.change(screen.getByRole("combobox", { name: /refresh interval/i }), { target: { value: "5" } });
+
+    await vi.advanceTimersByTimeAsync(5000);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    expect(fetchMock.mock.calls[1][0]).toMatch(/vitals\/advance$/);
+    expect(fetchMock.mock.calls[2][0]).toMatch(/vitals\/current$/);
+
+    unmount();
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
   it.each([
