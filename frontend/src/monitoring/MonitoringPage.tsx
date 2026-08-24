@@ -49,6 +49,10 @@ export function MonitoringPage({ observation, freshnessOverride }: MonitoringPag
     try {
       await advanceVitals(patientId, interval);
       setCurrentObservation(await getCurrentVitals(patientId));
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("status 422")) {
+        setSelectedInterval("manual");
+      }
     } finally {
       refreshInFlight.current = false;
     }

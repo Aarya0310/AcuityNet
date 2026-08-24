@@ -73,7 +73,11 @@ describe("MonitoringPage", () => {
 
   it("renders exactly the server-configured refresh options", async () => {
     render(<MonitoringPage observation={observation} />);
-    await act(async () => { await Promise.resolve(); await Promise.resolve(); });
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
 
     expect(screen.getByRole("combobox", { name: /refresh interval/i })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "5 seconds" })).toBeInTheDocument();
@@ -119,6 +123,40 @@ describe("MonitoringPage", () => {
     unmount();
     await vi.advanceTimersByTimeAsync(5000);
     expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it("stops automatic refresh when the bounded scenario is exhausted", async () => {
+    let sequence = 3;
+    vi.stubGlobal("fetch", vi.fn((url: string, init?: RequestInit) => {
+      if (url.endsWith("/api/v1/configuration")) {
+        return response({ supported_intervals: [5, 10, 30, "manual"], default_interval: 10 });
+      }
+      if (url.endsWith("/vitals/advance")) {
+        sequence += 1;
+        if (sequence > 4) return Promise.resolve({ ok: false, status: 422, json: () => Promise.resolve({}) });
+      }
+      return response({ ...observation, sequence });
+    }));
+    const fetchMock = vi.mocked(fetch);
+
+    render(<MonitoringPage observation={observation} />);
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    fireEvent.change(screen.getByRole("combobox", { name: /refresh interval/i }), { target: { value: "5" } });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10000);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(screen.getByRole("combobox", { name: /refresh interval/i })).toHaveValue("manual");
+    await act(async () => { await vi.advanceTimersByTimeAsync(5000); });
+    expect(fetchMock).toHaveBeenCalledTimes(4);
   });
 
   it.each([
