@@ -13,7 +13,9 @@ python -m pip install -e ".\backend[test]"
 Copy-Item .env.example .env
 ```
 
-The checked-in `.env.example` documents local defaults. The Phase 1 backend uses SQLite and does not require a service or secret.
+The checked-in `.env.example` documents local defaults. Phase 2 requires a local-only `ACUITYNET_JWT_SECRET`; never commit it, print it, or place it in scripts.
+
+Development-only demo credentials are `admin` / `admin-password`, `doctor` / `doctor-password`, and `sarah` / `sarah-password`. They are fictional prototype credentials and must not be reused.
 
 ## Clean Phase 1 Fixture
 
@@ -51,7 +53,7 @@ npm --prefix frontend install
 npm --prefix frontend run dev
 ```
 
-The browser monitoring view uses public read-only synthetic research-prototype endpoints. Bounded advance is a development fixture operation; authenticated mutations begin in a later phase.
+The browser monitoring view uses authenticated synthetic research-prototype endpoints. Bounded advance is Admin-only; Doctor and assigned Nurse Sarah have read access. The unassigned Nurse fixture is test-only and is never part of the three-account demo seed.
 
 ## Verification
 
@@ -59,6 +61,8 @@ The deterministic smoke runner launches and tears down its own Uvicorn child pro
 
 ```powershell
 python scripts/phase1_smoke.py
+$env:ACUITYNET_JWT_SECRET = "set-a-local-secret-here"
+python scripts/phase2_smoke.py
 python -m pytest backend/tests/test_migrations.py backend/tests/test_safety_boundary.py backend/tests/test_seed.py backend/tests/test_scenario.py backend/tests/test_vital_contracts.py backend/tests/test_vitals_api.py -q
 npm --prefix frontend run test -- --run
 npm --prefix frontend run build
