@@ -1,0 +1,1 @@
+export function AdminKpiView() { return <section><h2>Operational KPIs</h2><p>Phase 2-owned values are server-derived; later workflow measures are unavailable.</p></section>; }

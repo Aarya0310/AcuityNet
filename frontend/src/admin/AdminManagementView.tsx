@@ -1,0 +1,1 @@
+export function AdminManagementView() { return <section><h2>Prototype management</h2><p>Admin controls are protected by the API.</p></section>; }
