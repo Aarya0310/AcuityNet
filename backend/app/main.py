@@ -5,6 +5,7 @@ from fastapi import FastAPI, HTTPException
 from sqlalchemy import select
 
 from backend.app.contracts.configuration import RefreshConfiguration
+from backend.app.contracts.metadata import HealthResponse
 from backend.app.contracts.patients import PatientSummary
 from backend.app.contracts.vitals import (
     AdvanceRequest,
@@ -15,11 +16,15 @@ from backend.app.contracts.vitals import (
 from backend.app.persistence.database import make_engine, migrate_database, session_factory
 from backend.app.persistence.models import Bed, Patient, VitalObservation
 from backend.app.transport.configuration import refresh_configuration
+from backend.app.transport.health import health_response
 from backend.app.seed.demo_data import seed_demo_data
 from backend.app.vitals.scenario import P1042Scenario
 from backend.app.vitals.service import ObservationService
-
-PROTOTYPE_LABEL = "Research prototype: simulated ICU data, not clinical advice."
+from backend.app.safety.labels import (
+    PROTOTYPE_LABEL,
+    SYNTHETIC_SOURCE_KIND,
+    SYNTHETIC_SOURCE_NAME,
+)
 
 
 def create_app(
@@ -67,8 +72,8 @@ def create_app(
             diastolic_bp_mmhg=row.diastolic_bp_mmhg,
             temperature_c=row.temperature_c,
             provenance=SyntheticProvenance(
-                source_kind=row.source_kind,
-                source_name=row.source_name,
+                source_kind=SYNTHETIC_SOURCE_KIND,
+                source_name=SYNTHETIC_SOURCE_NAME,
                 scenario_id=row.scenario_id,
                 scenario_version=row.scenario_version,
                 is_live_bedside_feed=False,
@@ -77,9 +82,9 @@ def create_app(
             prototype_label=PROTOTYPE_LABEL,
         )
 
-    @app.get("/health")
-    def health():
-        return {"status": "ok"}
+    @app.get("/health", response_model=HealthResponse)
+    def health() -> HealthResponse:
+        return health_response()
 
     @app.get(
         "/api/v1/configuration/refresh",

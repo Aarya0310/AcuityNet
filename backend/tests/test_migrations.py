@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 import pytest
 from sqlalchemy import event, select
 from sqlalchemy.exc import IntegrityError
@@ -29,8 +31,8 @@ def test_sqlite_foreign_keys_reject_orphan_observations(tmp_path):
                 patient_id="P-MISSING",
                 bed_id="BED-MISSING",
                 sequence=0,
-                observed_at="2026-01-01T00:00:00+00:00",
-                received_at="2026-01-01T00:00:00+00:00",
+                observed_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
+                received_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
                 spo2_percent=98,
                 heart_rate_bpm=82,
                 respiratory_rate_bpm=16,
@@ -53,15 +55,17 @@ def test_reset_requires_seeded_fixture_and_removes_observations_first(tmp_path):
     engine = make_engine(database_url)
     sessions = session_factory(engine)
 
-    with sessions.begin() as session:
+    with sessions() as session:
         seed_demo_data(session)
+
+    with sessions.begin() as session:
         session.add(
             VitalObservation(
                 patient_id="P-1042",
                 bed_id="ICU-12",
                 sequence=0,
-                observed_at="2026-01-01T00:00:00+00:00",
-                received_at="2026-01-01T00:00:00+00:00",
+                observed_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
+                received_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
                 spo2_percent=98,
                 heart_rate_bpm=82,
                 respiratory_rate_bpm=16,
