@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 import { MonitoringPage } from "./MonitoringPage";
 import type { VitalObservation } from "../contracts/vitals";
 
@@ -28,6 +28,8 @@ const observation: VitalObservation = {
   prototype_label: "Research prototype: simulated ICU data, not clinical advice.",
 };
 
+afterEach(cleanup);
+
 describe("MonitoringPage", () => {
   it("renders P-1042 context, six vitals, timestamps, and safety metadata", () => {
     render(<MonitoringPage observation={observation} />);
@@ -38,12 +40,13 @@ describe("MonitoringPage", () => {
     expect(screen.getByText("94 %")).toBeInTheDocument();
     expect(screen.getByText("112 bpm")).toBeInTheDocument();
     expect(screen.getByText("24 /min")).toBeInTheDocument();
-    expect(screen.getByText("98/62 mmHg")).toBeInTheDocument();
+    expect(screen.getByText("98 mmHg")).toBeInTheDocument();
+    expect(screen.getByText("62 mmHg")).toBeInTheDocument();
     expect(screen.getByText("38.1 C")).toBeInTheDocument();
-    expect(screen.getByText(/Sequence 2/)).toBeInTheDocument();
+    expect(screen.getByText((_, element) => element?.textContent?.replace(/\s+/g, " ").trim() === "Sequence: 2")).toBeInTheDocument();
     expect(screen.getByText(/acuitynet-simulator/)).toBeInTheDocument();
-    expect(screen.getByText("fresh")).toBeInTheDocument();
-    expect(screen.getByText("Research prototype: simulated ICU data, not clinical advice.")).toBeInTheDocument();
+    expect(screen.getByText("Feed current")).toBeInTheDocument();
+    expect(screen.getByText("Simulated ICU environment - research prototype - not for clinical use")).toBeInTheDocument();
   });
 
   it.each([
@@ -56,6 +59,6 @@ describe("MonitoringPage", () => {
 
     expect(screen.getByText(stateLabel)).toBeInTheDocument();
     expect(screen.queryByText(/diagnos|treat|clinical recommendation/i)).not.toBeInTheDocument();
-    expect(screen.getByText("Research prototype: simulated ICU data, not clinical advice.")).toBeInTheDocument();
+    expect(screen.getByText("Simulated ICU environment - research prototype - not for clinical use")).toBeInTheDocument();
   });
 });
