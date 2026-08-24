@@ -1,33 +1,27 @@
 ﻿# Phase 2 Plan Checker
 
-**Verdict:** FAIL
+**Review date:** 2026-08-24
+**Scope:** Current six-plan Phase 2 planning set
 
-The four plans cover all 11 Phase 2 requirement IDs and the five roadmap success criteria at a high level, and their declared waves are acyclic (`02-01` -> `02-02` -> `02-03` -> `02-04`). The following issues must be addressed before execution.
+**Verdict:** PASS-oriented checklist
 
-## Blockers
+The current six plans cover all 11 Phase 2 requirement IDs and the five roadmap success criteria. Declared dependencies and waves remain acyclic and the Phase 2 scope is unchanged.
 
-1. **[requirement_coverage] ADMIN-01 is not actually planned.** `02-03` claims Admin management, but its tasks only define typed configuration and KPI work. No task specifies endpoints, service symbols, DTOs, persistence mutations, or tests for managing prototype users, nurse status, or beds. This leaves three required management capabilities uncovered.
-   - **Plan:** `02-03`, Task 1
-   - **Fix:** Add explicit user, nurse-status, and bed management actions with exact route/service/test targets, or split them into a dependent plan. Include Admin success cases, Doctor/Nurse 403 cases, validation, and persistence assertions.
+## Coverage Checklist
 
-2. **[requirement_coverage] AUTH-03 lacks a verifiable resource/assignment policy contract.** `02-01` says “minimum patient/nurse assignment relationship” and mentions wrong-patient and out-of-assignment tests, but does not identify the policy symbols, protected route matrix, assignment fixture(s), or the concrete behavior for Admin, Doctor, Nurse, and an unassigned Nurse. A single seeded Nurse assigned to P-1042 cannot prove the unassigned path.
-   - **Plan:** `02-01`, Task 2
-   - **Fix:** Define the exact policy functions and protected route paths, seed a second assignment state or a second Nurse fixture without adding a fourth role, and enumerate expected 401/403 outcomes for anonymous, wrong-role, wrong-patient, and unassigned access/advance calls.
+- [x] All 11 Phase 2 requirement IDs are assigned across `02-01` through `02-06`.
+- [x] The plan set preserves the Phase 2 goal, five roadmap success criteria, dependencies, and waves.
+- [x] Exactly three demo accounts are defined: Admin, Doctor, and Nurse Sarah.
+- [x] AUTH-03's unassigned Nurse is a deterministic test-only persisted fixture excluded from demo seed and demo account counts.
+- [x] `02-04` names Admin DTOs, ORM relationships, operations, routes, persistence assertions, validation, and Doctor/Nurse 403 checks.
+- [x] `02-06` lists exact frontend test files rather than an unbounded test glob.
+- [x] Reset/reseed, foreign-key safety, secret preflight, and secret-safe smoke expectations remain covered.
 
-3. **[scope_sanity] `02-01` is oversized for one execution slice.** Its single implementation task names 24 modified files and combines migration, seed/reset, password/JWT security, dependencies, policy, transport, existing-route protection, and a React auth shell. This exceeds the plan checker’s 15-file blocker threshold and makes the identity boundary difficult to validate incrementally.
-   - **Plan:** `02-01`, Task 2
-   - **Fix:** Split into a migration/seed/auth backend slice and a protected-route/frontend session slice, with an explicit dependency between them. Preserve the human package checkpoint before the backend JWT work.
+## Required Execution Checks
 
-## Warnings
-
-4. **[key_links_planned] PRED-04 runtime wiring is asserted but not assigned to an implementation file.** `02-03` says effective settings are consumed by the prediction adapter, but `backend/app/prediction/adapter.py` is absent from `02-03`’s files and its action does not name the adapter entry point or a cross-plan integration test. An Admin write could therefore persist successfully while predictions continue using constants.
-   - **Fix:** Name the adapter/service symbol and modify it in `02-03`, or add a focused test in `02-03` that proves a configuration update changes the next prediction without changing the adapter’s ownership plan.
-
-5. **[task_completeness] Authorization and setup behavior are not exact enough for the requested safety review.** `02-01` names “existing current-vitals and advance routes” but not their route symbols, and `02-04` describes a Windows smoke runner without specifying how it supplies `ACUITYNET_JWT_SECRET`. The checks are runnable, but the intended protected surface and secret setup are not mechanically unambiguous.
-   - **Fix:** List the exact FastAPI route paths/functions, policy dependencies, and smoke environment setup/assertions in the task actions.
-
-6. **[dependency_correctness] Migration/seed reset consistency has no focused reset verification.** The plan includes `reset.py` and says to preserve deletion ordering, but `test_phase2_seed.py` and `test_phase2_migration.py` are the only named persistence checks; no test proves reset succeeds with the new user/assignment foreign keys and reseeding restores exactly the intended rows.
-   - **Fix:** Add a reset/reseed assertion to the Phase 2 persistence tests or to the integration smoke path, including foreign-key enforcement and stable IDs/counts.
+- [ ] Run the blocking PyJWT legitimacy and local secret setup checkpoint in `02-01`.
+- [ ] Validate each plan's frontmatter and task structure before execution.
+- [ ] Execute plans in declared wave order.
 
 ## Covered Areas
 
