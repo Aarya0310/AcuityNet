@@ -41,7 +41,6 @@ Reset is explicit and destructive for the fictional Phase 1 fixture. It does not
 Start the API in one PowerShell window:
 
 ```powershell
-cd backend
 uvicorn backend.app.main:app --reload
 ```
 
