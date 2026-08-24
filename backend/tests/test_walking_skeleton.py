@@ -61,7 +61,7 @@ def test_empty_database_migrates_and_writes_bounded_synthetic_observation(tmp_pa
         assert session.scalar(select(func.count()).select_from(Bed)) == 1
         assert session.scalar(select(func.count()).select_from(Nurse)) == 1
         assert session.scalar(select(func.count()).select_from(History)) == 1
-        assert session.scalar(select(func.count()).select_from(Configuration)) == 1
+        assert session.scalar(select(func.count()).select_from(Configuration)) == 3
         assert session.scalar(select(func.count()).select_from(VitalObservation)) == 1
 
 
