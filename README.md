@@ -77,3 +77,17 @@ alembic --config alembic.ini upgrade head
 alembic --config alembic.ini check
 cd ..
 ```
+
+## Phase 3 Monitoring Verification (2026-08-24)
+
+Phase 3 uses the deterministic P-1042 deterioration journey. Run migrations separately, then reset and reseed the complete fixture graph; reset deletes observations, prediction evidence, alert events, alerts, audit events, and Phase 1 rows in dependency-safe order. Reseeding creates only `U-ADMIN`, `U-DOCTOR`, `U-SARAH`, P-1042, its context, and typed configuration. It does not fabricate an alert, assignment, candidate, or decision.
+
+```powershell
+$env:ACUITYNET_JWT_SECRET = "set-a-local-secret-here"
+python scripts/phase3_smoke.py
+python -m pytest backend/tests/test_phase3_migration.py backend/tests/test_phase3_integration.py backend/tests/test_alerts.py backend/tests/test_lifecycle_audit.py backend/tests/test_realtime.py -q
+```
+
+Expected states are `generated`, `assigned`, `acknowledged`, `responded`, and `resolved`. The fallback prediction remains labeled `deterministic_fallback` with its reason and synthetic provenance. A repeated threshold evaluation returns `reused_active`. Typed `no_candidate` and `not_yet_available` states are presentational boundaries only; this phase does not fabricate a no-candidate decision. Alert counts are available from persisted Phase 3 rows, while response time and acknowledgement rate remain `not_yet_available` until Phase 4.
+
+The smoke runner preflights the local secret, passes it only to its temporary-database child process, suppresses child logs, and never prints passwords, JWTs, headers, or secret values. Phase 4 historian, candidate ranking, human confirmation/override, nurse dispatch, and assigned-Nurse UX are intentionally absent.

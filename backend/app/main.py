@@ -1,5 +1,6 @@
 from collections.abc import Callable
 from datetime import datetime, timezone
+import os
 
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -42,9 +43,10 @@ from backend.app.transport.realtime import realtime_router
 
 
 def create_app(
-    database_url: str = "sqlite:///acuitynet.db",
+    database_url: str | None = None,
     clock: Callable[[], datetime] | None = None,
 ) -> FastAPI:
+    database_url = database_url or os.environ.get("ACUITYNET_DATABASE_URL", "sqlite:///acuitynet.db")
     migrate_database(database_url)
     engine = make_engine(database_url)
     sessions = session_factory(engine)
