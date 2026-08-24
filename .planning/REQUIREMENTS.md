@@ -12,8 +12,8 @@
 - [ ] **AUTH-03**: The API enforces role and resource permissions server-side, including patient and assignment ownership; hidden navigation alone is not treated as authorization.
 - [ ] **AUTH-04**: A user can log out, and protected requests without a valid session are rejected.
 - [ ] **UI-01**: Admin, Doctor, and Nurse each see role-appropriate navigation and dashboards rather than one unrestricted hospital view.
-- [ ] **DATA-01**: The system provides seeded P-1042 patient, ICU bed, nurse, admission, history, and configuration data for a repeatable demonstration.
-- [ ] **DATA-02**: The system stores and displays data provenance identifying live monitoring observations as synthetic and any MIMIC-IV material as retrospective research/training data.
+- [x] **DATA-01**: The system provides seeded P-1042 patient, ICU bed, nurse, admission, history, and configuration data for a repeatable demonstration.
+- [x] **DATA-02**: The system stores and displays data provenance identifying live monitoring observations as synthetic and any MIMIC-IV material as retrospective research/training data.
 
 ### Monitoring and Prediction
 
@@ -119,8 +119,8 @@
 | AUTH-03 | Phase 2 | Pending |
 | AUTH-04 | Phase 2 | Pending |
 | UI-01 | Phase 2 | Pending |
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Complete |
+| DATA-02 | Phase 1 | Complete |
 | VITAL-01 | Phase 1 | Pending |
 | VITAL-02 | Phase 1 | Pending |
 | VITAL-03 | Phase 1 | Pending |
@@ -156,6 +156,7 @@
 | SAFE-01 | Phase 1 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 40 total
 - Mapped to phases: 40
 - Unmapped: 0
