@@ -12,7 +12,7 @@ AcuityNet v1 delivers one safe, reproducible P-1042 journey: seeded users observ
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Safety, Simulation, and Backend Contracts** - Establish truthful provenance, deterministic P-1042 data, persistence, and monitoring contracts. (completed 2026-08-24)
-- [ ] **Phase 2: Identity, Authorization, and Prediction Adapter** - Make access role-aware and predictions stable, configurable, and honest about fallback behavior.
+- [x] **Phase 2: Identity, Authorization, and Prediction Adapter** - Make access role-aware and predictions stable, configurable, and honest about fallback behavior. (executed 2026-08-24; verification blockers recorded)
 - [ ] **Phase 3: Monitoring, Alerts, Lifecycle, and Audit** - Turn deterioration into deduplicated, recoverable, auditable alert state.
 - [ ] **Phase 4: Medical Historian and Human-Confirmed Dispatch** - Explain patient context and complete nurse workflow with explicit human control.
 - [ ] **Phase 5: End-to-End Verification and Demo Hardening** - Prove the journey, degraded states, permissions, reset path, and prototype boundaries.
@@ -67,17 +67,17 @@ Requirement ownership:
   5. An Admin can change prototype thresholds, refresh settings, and research configuration and inspect the operational KPIs and controls available to that role.
 
 **Rationale**: Identity and server-side policy are prerequisites for meaningful role-specific views, while the prediction adapter supplies the stable input to every later workflow.
-**Plans:** 8 plans
+**Plans:** 8/8 plans executed
 Plans:
 
-- [ ] 02-01-PLAN.md - Migration-backed seeded identity, JWT sessions, and reset/reseed foundation
-- [ ] 02-02-PLAN.md - Server authorization matrix, UI bypass protection, and frontend session guard
-- [ ] 02-03-PLAN.md - Stable prediction adapter, deterministic fallback, and Clinical Prognosticator
-- [ ] 02-07-PLAN.md - Admin repository and typed configuration persistence expansion
-- [ ] 02-04-PLAN.md - Admin management, typed configuration, and prediction wiring
-- [ ] 02-05-PLAN.md - Typed Admin KPI read model and dashboard
-- [ ] 02-06-PLAN.md - Primary role dashboards and navigation composition
-- [ ] 02-08-PLAN.md - Phase 2 integration, secret-safe smoke, and reproducibility verification
+- [x] 02-01-PLAN.md - Migration-backed seeded identity, JWT sessions, and reset/reseed foundation
+- [x] 02-02-PLAN.md - Server authorization matrix, UI bypass protection, and frontend session guard
+- [x] 02-03-PLAN.md - Stable prediction adapter, deterministic fallback, and Clinical Prognosticator
+- [x] 02-07-PLAN.md - Admin repository and typed configuration persistence expansion
+- [x] 02-04-PLAN.md - Admin management, typed configuration, and prediction wiring
+- [x] 02-05-PLAN.md - Typed Admin KPI read model and dashboard
+- [x] 02-06-PLAN.md - Primary role dashboards and navigation composition
+- [x] 02-08-PLAN.md - Phase 2 integration, secret-safe smoke, and reproducibility verification
 **UI hint**: yes
 
 ### Phase 3: Monitoring, Alerts, Lifecycle, and Audit
@@ -141,7 +141,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Safety, Simulation, and Backend Contracts | 6/6 | Complete    | 2026-08-24 |
-| 2. Identity, Authorization, and Prediction Adapter | 0/8 | Not started | - |
+| 2. Identity, Authorization, and Prediction Adapter | 8/8 | Executed with verification blockers | 2026-08-24 |
 | 3. Monitoring, Alerts, Lifecycle, and Audit | 0/TBD | Not started | - |
 | 4. Medical Historian and Human-Confirmed Dispatch | 0/TBD | Not started | - |
 | 5. End-to-End Verification and Demo Hardening | 0/TBD | Not started | - |
