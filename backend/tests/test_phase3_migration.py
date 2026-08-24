@@ -2,10 +2,10 @@ from datetime import datetime, timezone
 
 from alembic.config import Config
 from alembic import command
-from sqlalchemy import create_engine, inspect, select
+from sqlalchemy import create_engine, func, inspect, select
 from sqlalchemy.orm import sessionmaker
 
-from backend.app.persistence.models import Alert, AlertEvent, AuditEvent, PredictionEvidence, VitalObservation
+from backend.app.persistence.models import Alert, AlertEvent, AuditEvent, PredictionEvidence, User, VitalObservation
 from backend.app.seed.demo_data import seed_demo_data
 from backend.app.seed.reset import reset_demo_data
 
@@ -67,3 +67,5 @@ def test_reset_deletes_phase3_children_before_reseed(tmp_path):
         assert session.scalar(select(AlertEvent)) is None
         assert session.scalar(select(AuditEvent)) is None
         assert session.scalar(select(PredictionEvidence)) is None
+        assert session.scalar(select(func.count()).select_from(VitalObservation)) == 0
+        assert session.scalar(select(func.count()).select_from(User)) == 3

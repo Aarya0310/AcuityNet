@@ -1,5 +1,9 @@
 from datetime import datetime, timezone
 import json
+import os
+import subprocess
+import sys
+from pathlib import Path
 
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, func, select
@@ -104,6 +108,26 @@ def test_equal_clock_order_and_invalid_transition_are_stable(tmp_path):
     assert client.get("/api/v1/patients/P-1042/alert", headers=doctor).json()["state"] == "generated"
     client.post("/api/v1/patients/P-1042/alert/lifecycle", json={"action": "assign", "assignment_id": "N-SARAH", "assignment_evidence": "evidence"}, headers=doctor)
     client.post("/api/v1/patients/P-1042/alert/lifecycle", json={"action": "acknowledge"}, headers=sarah)
+    conflict = client.post("/api/v1/patients/P-1042/alert/lifecycle", json={"action": "acknowledge"}, headers=sarah)
+    assert conflict.status_code == 422
     audit = client.get("/api/v1/patients/P-1042/audit", headers=doctor).json()["events"]
     assert [item["audit_id"] for item in audit] == sorted(item["audit_id"] for item in audit)
     client.close()
+
+
+def test_anonymous_denial_and_smoke_preflight_are_secret_safe(tmp_path):
+    client, database_url, _now, roles = make_journey(tmp_path)
+    denied = client.get("/api/v1/patients/P-1042/alert", headers={"Authorization": "Bearer should-not-be-stored"})
+    assert denied.status_code == 401
+    client.close()
+    with sessionmaker(bind=create_engine(database_url))() as session:
+        events = session.scalars(select(AuditEvent)).all()
+        assert any(item.outcome == "denied" and item.actor_id is None for item in events)
+        assert all("should-not-be-stored" not in item.details and "authorization" not in item.details.lower() for item in events)
+
+    environment = os.environ.copy()
+    environment.pop("ACUITYNET_JWT_SECRET", None)
+    result = subprocess.run([sys.executable, "scripts/phase3_smoke.py"], cwd=Path(__file__).parents[2], env=environment, capture_output=True, text=True, check=False)
+    assert result.returncode == 2
+    assert "required" in result.stderr
+    assert "password" not in (result.stdout + result.stderr).lower()
