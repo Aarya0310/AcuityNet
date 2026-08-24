@@ -57,8 +57,8 @@
 
 - [ ] **ADMIN-01**: Admin users can manage prototype users, nurse status, beds, refresh settings, risk thresholds, and research-rule configuration.
 - [ ] **ADMIN-02**: Admin users can inspect hospital KPIs for occupancy, monitored patients, active nurses, critical/high-risk patients, alerts, predictions, response time, acknowledgement rate, and system status.
-- [ ] **REAL-01**: REST is authoritative for reads and mutations, while WebSockets deliver synthetic vital updates or invalidation events and reconnect/reload recovers through REST.
-- [ ] **REAL-02**: The application provides an honest operational state for loading, stale, disconnected, unavailable-fallback, and no-candidate conditions.
+- [x] **REAL-01**: REST is authoritative for reads and mutations, while WebSockets deliver synthetic vital updates or invalidation events and reconnect/reload recovers through REST.
+- [x] **REAL-02**: The application provides an honest operational state for loading, stale, disconnected, unavailable-fallback, and no-candidate conditions.
 - [ ] **TEST-01**: Automated backend and frontend tests cover login, role/resource authorization, synthetic feed behavior, prediction fallback, alert generation/deduplication, lifecycle transitions, historian retrieval, dispatch ranking, nurse actions, and audit recording.
 - [ ] **TEST-02**: A clean local setup using SQLite migrations and seeded data can reproduce the P-1042 journey from deterioration through resolution, including a documented demo reset or setup path.
 - [x] **SAFE-01**: User-facing prediction, contextual risk, alert, and dispatch surfaces clearly state that AcuityNet is a research prototype using simulated ICU data and do not provide diagnosis or treatment advice.
@@ -149,8 +149,8 @@
 | NURS-03 | Phase 4 | Pending |
 | ADMIN-01 | Phase 2 | Pending |
 | ADMIN-02 | Phase 2 | Pending |
-| REAL-01 | Phase 3 | Pending |
-| REAL-02 | Phase 3 | Pending |
+| REAL-01 | Phase 3 | Complete |
+| REAL-02 | Phase 3 | Complete |
 | TEST-01 | Phase 5 | Pending |
 | TEST-02 | Phase 5 | Pending |
 | SAFE-01 | Phase 1 | Complete |
