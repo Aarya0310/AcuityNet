@@ -139,7 +139,8 @@ The smoke journey verifies deterministic deterioration, prediction fallback prov
 
 ## Troubleshooting
 
-- **401 responses:** Set `ACUITYNET_JWT_SECRET` in the same PowerShell session used to start the API, then log in again.
+- **401 responses:** Confirm the username and password exactly match the demo table, then log in again. The documented demo credentials are `admin` / `admin-password`, `doctor` / `doctor-password`, and `sarah` / `sarah-password`.
+- **500 response or API configuration error on login:** Stop and restart Uvicorn after setting `ACUITYNET_JWT_SECRET` in that same PowerShell window. A secret set in a different terminal does not reach the running API process.
 - **Frontend cannot reach the API:** Confirm the backend is running on port `8000` and that `VITE_API_BASE_URL` matches it.
 - **Port already in use:** Start Uvicorn with another port, then set `VITE_API_BASE_URL` to that port before starting Vite.
 - **Migration errors:** Stop the API, verify the database URL, run `Push-Location backend; alembic --config alembic.ini upgrade head; Pop-Location` from the repository root, and restart the API.

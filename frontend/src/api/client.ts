@@ -6,6 +6,12 @@ import type { Alert, AlertEvent, AuditEvent } from "../contracts/alerts";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
 let accessToken: string | null = localStorage.getItem("acuitynet.access_token");
 
+export class ApiError extends Error {
+  constructor(public readonly status: number) {
+    super(`Request failed with status ${status}`);
+  }
+}
+
 export type AuthUser = { user_id: string; username: string; display_name: string; role: "admin" | "doctor" | "nurse" };
 export type Session = { access_token: string; token_type: "bearer"; expires_in: number; user: AuthUser };
 export function clearSession() { accessToken = null; localStorage.removeItem("acuitynet.access_token"); }
@@ -40,7 +46,7 @@ async function getJson<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers: { ...authHeaders(), ...init?.headers } });
   if (response.status === 401) clearSession();
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    throw new ApiError(response.status);
   }
   return (await response.json()) as T;
 }
