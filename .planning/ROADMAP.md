@@ -11,7 +11,7 @@ AcuityNet v1 delivers one safe, reproducible P-1042 journey: seeded users observ
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Safety, Simulation, and Backend Contracts** - Establish truthful provenance, deterministic P-1042 data, persistence, and monitoring contracts.
+- [x] **Phase 1: Safety, Simulation, and Backend Contracts** - Establish truthful provenance, deterministic P-1042 data, persistence, and monitoring contracts. (completed 2026-08-24)
 - [ ] **Phase 2: Identity, Authorization, and Prediction Adapter** - Make access role-aware and predictions stable, configurable, and honest about fallback behavior.
 - [ ] **Phase 3: Monitoring, Alerts, Lifecycle, and Audit** - Turn deterioration into deduplicated, recoverable, auditable alert state.
 - [ ] **Phase 4: Medical Historian and Human-Confirmed Dispatch** - Explain patient context and complete nurse workflow with explicit human control.
@@ -33,7 +33,7 @@ AcuityNet v1 delivers one safe, reproducible P-1042 journey: seeded users observ
   4. Monitoring and prediction-related surfaces identify the system as a simulated ICU research prototype and do not present the feed as bedside truth or clinical advice.
 
 **Rationale**: Safety labeling, provenance, deterministic simulation, and schema boundaries must exist before risk and alert behavior can be trusted in a demonstration.
-**Plans:** 6/6 plans executed
+**Plans:** 6/6 plans complete
 Plans:
 
 - [x] 01-01-PLAN.md - Backend walking skeleton, migration, and minimal P-1042 prerequisite
@@ -130,7 +130,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Safety, Simulation, and Backend Contracts | 6/6 | In Progress|  |
+| 1. Safety, Simulation, and Backend Contracts | 6/6 | Complete    | 2026-08-24 |
 | 2. Identity, Authorization, and Prediction Adapter | 0/TBD | Not started | - |
 | 3. Monitoring, Alerts, Lifecycle, and Audit | 0/TBD | Not started | - |
 | 4. Medical Historian and Human-Confirmed Dispatch | 0/TBD | Not started | - |
