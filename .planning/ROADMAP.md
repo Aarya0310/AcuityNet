@@ -96,7 +96,7 @@ Plans:
   5. A disconnected, stale, loading, unavailable-fallback, or no-candidate operational state is visible, and a page reload or WebSocket reconnect recovers authoritative state through REST.
 
 **Rationale**: The core value is a traceable deterioration-to-resolution workflow; lifecycle correctness, freshness, and audit persistence must be established before dispatch actions are layered on top.
-**Plans:** 4 plans revised 2026-08-24
+**Plans:** 4 plans revised 2026-08-24 after checker blockers
 Plans:
 
 - [ ] 03-01-PLAN.md - Threshold-backed alert persistence and deduplication
