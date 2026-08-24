@@ -1,0 +1,1 @@
+export type Prediction = { patient_id: string; bed_id: string; event: string; probability: number; score: number; level: string; horizon_minutes: number; source_kind: "ml" | "deterministic_fallback"; source_version: string; fallback_reason?: string };

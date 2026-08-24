@@ -1,0 +1,3 @@
+import { useState } from "react";
+import { useAuth } from "./AuthContext";
+export function LoginPage() { const { signIn } = useAuth(); const [username, setUsername] = useState(""); const [password, setPassword] = useState(""); const [error, setError] = useState<string | null>(null); return <main><h1>AcuityNet</h1><form onSubmit={async event => { event.preventDefault(); try { await signIn(username, password); } catch { setError("Invalid credentials"); } }}><label>Username<input value={username} onChange={event => setUsername(event.target.value)} /></label><label>Password<input type="password" value={password} onChange={event => setPassword(event.target.value)} /></label><button type="submit">Sign in</button>{error && <p role="alert">{error}</p>}</form></main>; }
