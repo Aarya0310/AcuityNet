@@ -22,10 +22,10 @@ export async function getAlertAudit(patientId: string): Promise<AuditEvent[]> {
   const result = await getJson<{ events: AuditEvent[] }>(`/api/v1/patients/${encodeURIComponent(patientId)}/audit`);
   return result.events;
 }
-export function getAccessToken(): string | null { return accessToken; }
+export function getAccessToken(): string | null { return accessToken ?? localStorage.getItem("acuitynet.access_token"); }
 export function realtimeUrl(patientId: string): string {
   const base = API_BASE_URL.replace(/^http/, "ws");
-  return `${base}/api/v1/patients/${encodeURIComponent(patientId)}/realtime?access_token=${encodeURIComponent(accessToken ?? "")}`;
+  return `${base}/api/v1/patients/${encodeURIComponent(patientId)}/realtime?access_token=${encodeURIComponent(getAccessToken() ?? "")}`;
 }
 
 export async function getCurrentVitals(patientId: string): Promise<VitalObservation> {

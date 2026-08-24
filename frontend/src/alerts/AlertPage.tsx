@@ -5,17 +5,19 @@ import { OperationalState } from "../operational/OperationalState";
 import { PrototypeBanner } from "../safety/PrototypeBanner";
 import { useAlertRealtime } from "./useAlertRealtime";
 
-export function AlertPage({ patientId = "P-1042" }: { patientId?: string }) {
+export function AlertPage({ patientId = "P-1042", operationalState }: { patientId?: string; operationalState?: AlertOperationalState }) {
   const alert = useQuery({ queryKey: ["alert", patientId], queryFn: () => getCurrentAlert(patientId), retry: false });
   const events = useQuery({ queryKey: ["alert-events", patientId], queryFn: () => getAlertEvents(patientId), retry: false, enabled: Boolean(alert.data) });
   const audit = useQuery({ queryKey: ["alert-audit", patientId], queryFn: () => getAlertAudit(patientId), retry: false });
   const realtime = useAlertRealtime(patientId);
   const hasData = Boolean(alert.data);
-  let state: AlertOperationalState = "loading";
-  if (!alert.isLoading && alert.isError) state = hasData ? "stale" : "unavailable_fallback";
-  else if (!alert.isLoading && !alert.data) state = "no_active_alert";
-  else if (!alert.isLoading && alert.data?.prediction_source_kind === "deterministic_fallback") state = "deterministic_fallback";
-  else if (realtime.state === "disconnected" || realtime.state === "error") state = hasData ? "disconnected" : "unavailable_fallback";
+  let state: AlertOperationalState = operationalState ?? "loading";
+  if (!operationalState) {
+    if (!alert.isLoading && alert.isError) state = hasData ? "stale" : "unavailable_fallback";
+    else if (!alert.isLoading && !alert.data) state = "no_active_alert";
+    else if (!alert.isLoading && alert.data?.prediction_source_kind === "deterministic_fallback") state = "deterministic_fallback";
+    else if (realtime.state === "disconnected" || realtime.state === "error") state = hasData ? "disconnected" : "unavailable_fallback";
+  }
 
   return (
     <main className="alert-shell">

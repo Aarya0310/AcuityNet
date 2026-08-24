@@ -17,8 +17,8 @@ export function useAlertRealtime(patientId: string, enabled = true) {
   const queryClient = useQueryClient();
   const [state, setState] = useState<RealtimeConnectionState>("disconnected");
   const [attempt, setAttempt] = useState(0);
-  const reconnectTimer = useRef<number>();
-  const socketRef = useRef<WebSocket>();
+  const reconnectTimer = useRef<number | undefined>(undefined);
+  const socketRef = useRef<WebSocket | undefined>(undefined);
 
   useEffect(() => {
     if (!enabled || !getAccessToken()) { setState("disconnected"); return; }
