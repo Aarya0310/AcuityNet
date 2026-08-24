@@ -30,6 +30,7 @@ from backend.app.transport.auth import auth_router
 from backend.app.auth.policy import get_current_user, require_patient_access, require_roles, require_nurse_assignment
 from backend.app.prediction.adapter import PredictionAdapter
 from backend.app.transport.predictions import prediction_router
+from backend.app.transport.admin import admin_router
 
 
 def create_app(
@@ -96,6 +97,7 @@ def create_app(
         )
 
     app.include_router(prediction_router(sessions, current_user, response_for, PredictionAdapter()))
+    app.include_router(admin_router(sessions, current_user))
 
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:
