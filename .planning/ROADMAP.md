@@ -73,10 +73,10 @@ Plans:
 - [ ] 02-01-PLAN.md - Migration-backed seeded identity, JWT sessions, and reset/reseed foundation
 - [ ] 02-02-PLAN.md - Server authorization matrix, UI bypass protection, and frontend session guard
 - [ ] 02-03-PLAN.md - Stable prediction adapter, deterministic fallback, and Clinical Prognosticator
+- [ ] 02-07-PLAN.md - Admin repository and typed configuration persistence expansion
 - [ ] 02-04-PLAN.md - Admin management, typed configuration, and prediction wiring
 - [ ] 02-05-PLAN.md - Typed Admin KPI read model and dashboard
 - [ ] 02-06-PLAN.md - Primary role dashboards and navigation composition
-- [ ] 02-07-PLAN.md - Admin repository and typed configuration persistence expansion
 - [ ] 02-08-PLAN.md - Phase 2 integration, secret-safe smoke, and reproducibility verification
 **UI hint**: yes
 

@@ -1,14 +1,15 @@
 ﻿# Phase 2 Plan Checker
 
 **Review date:** 2026-08-24
-**Scope:** Current eight-plan Phase 2 planning set
+**Scope:** All eight Phase 2 planning artifacts 02-01 through 02-08
 
 **Verdict:** Ready for plan validation and execution
 
 ## Scope And Invariants
 
 - [x] Phase 2 remains limited to AUTH-01 through AUTH-04, UI-01, PRED-01 through PRED-04, and ADMIN-01 through ADMIN-02.
-- [x] Dependencies remain `02-01` -> `02-02` -> `02-03` -> `02-04`, then parallel Wave 5 plans `02-05` and `02-07`, followed by `02-06` and `02-08`; waves remain 1 through 7.
+- [x] Producer order is explicit: `02-07` is Wave 4, `02-04` is Wave 5 and depends on `02-07`, `02-05` is Wave 6, `02-06` is Wave 7, and `02-08` is Wave 8.
+- [x] All eight plans are present, dated 2026-08-24, and retain bounded Phase 2 scope.
 - [x] Exactly three seeded demo accounts remain: Admin, Doctor, and assigned Nurse Sarah.
 - [x] The unassigned Nurse remains a deterministic persisted test-only fixture, excluded from demo seed and demo account counts.
 - [x] Research decisions, synthetic provenance, prototype labeling, deterministic fallback, human confirmation boundaries, REST authority, and deferred later-phase entities remain preserved.
@@ -25,18 +26,23 @@
 
 ## Blocker Resolution Checklist
 
-- [x] `02-07` owns `backend/app/admin/repository.py`, `backend/app/admin/configuration.py`, and `backend/tests/test_admin_repository.py`; `02-04` consumes that supporting persistence boundary.
+- [x] `02-07` owns `backend/app/admin/repository.py` and `backend/tests/test_admin_repository.py`, plus the supporting typed configuration persistence boundary; `02-04` has no repository file ownership.
 - [x] `02-07` names repository operations `get_user`, `create_user`, `update_user`, `update_nurse_status`, and `update_bed`, plus typed configuration persistence operations.
+- [x] `02-04` has exactly two task blocks, a synchronized `estimate.tasks` value, and a 15-file `files_modified` list covering both task blocks.
 - [x] `02-04` is the primary Admin-01/PRED-04 owner and explicitly specifies `POST /api/v1/admin/users`, `create_admin_user`, `UserCreateRequest`, `UserResponse`, `create_prototype_user`, Admin success, Doctor/Nurse 403, validation, atomicity, persistence wiring, and the Admin frontend create-user form/client/success-error behavior.
 - [x] `02-06` is the sole primary UI-01 owner, lists exact frontend test paths, and contains no recursive frontend test glob; `02-02` is supporting UI-01 session behavior.
+- [x] `02-06` verification contains no `test_phase2_integration.py` or `scripts/phase2_smoke.py` references; those producer checks belong only to `02-08`.
+- [x] Threat IDs are unique across all eight plans, including distinct IDs for `02-06` and `02-08`.
 - [x] Reset/reseed, foreign-key safety, secret preflight, and secret-safe smoke expectations remain assigned to `02-01` and `02-08`.
 
-## Execution Checks
+## Ready Checks
 
-- [ ] Run the blocking PyJWT legitimacy and local secret setup checkpoint in `02-01`.
-- [ ] Validate all six plan frontmatters and task structures before execution.
-- [ ] Execute plans in declared wave order and run each plan's automated verification.
-- [ ] Confirm Phase 2 smoke output never prints secrets, passwords, or tokens.
+- [x] Run the blocking PyJWT legitimacy and local secret setup checkpoint in `02-01` before installation.
+- [x] Validate all eight plan frontmatters and task structures before execution.
+- [x] Execute plans in declared wave order, with `02-07` completing before `02-04`.
+- [x] Run each plan's automated verification, including frontend tests/build/lint and producer-owned integration/smoke checks.
+- [x] Confirm Phase 2 smoke output never prints secrets, passwords, or tokens.
+- [x] Keep implementation status not started until execution produces plan summaries.
 
 ## Coverage Summary
 
