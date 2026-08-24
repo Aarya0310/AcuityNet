@@ -3,6 +3,18 @@ class RealtimePublisher:
 
     def __init__(self):
         self.published = []
+        self._subscribers = {}
+
+    def subscribe(self, patient_id, loop, queue):
+        self._subscribers.setdefault(patient_id, set()).add((loop, queue))
+
+    def unsubscribe(self, patient_id, loop, queue):
+        subscribers = self._subscribers.get(patient_id)
+        if subscribers is None:
+            return
+        subscribers.discard((loop, queue))
+        if not subscribers:
+            self._subscribers.pop(patient_id, None)
 
     def publish_after_commit(self, session, message):
         from sqlalchemy import event
@@ -14,7 +26,11 @@ class RealtimePublisher:
         session.info.setdefault("realtime_messages", []).append(dict(message))
 
     def after_commit(self, session):
-        self.published.extend(session.info.pop("realtime_messages", []))
+        messages = session.info.pop("realtime_messages", [])
+        self.published.extend(messages)
+        for message in messages:
+            for loop, queue in tuple(self._subscribers.get(message.get("patient_id"), ())):
+                loop.call_soon_threadsafe(queue.put_nowait, dict(message))
         session.info.pop("realtime_listeners", None)
 
     def discard_on_rollback(self, session):

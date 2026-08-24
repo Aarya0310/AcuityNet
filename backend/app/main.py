@@ -38,6 +38,7 @@ from backend.app.audit.service import AuditService
 from backend.app.realtime.publisher import RealtimePublisher
 from backend.app.transport.audit import audit_router
 from backend.app.auth.service import load_token_user
+from backend.app.transport.realtime import realtime_router
 
 
 def create_app(
@@ -130,6 +131,8 @@ def create_app(
     app.include_router(admin_router(sessions, current_user, audit_service))
     app.include_router(alert_router(sessions, current_user, alert_service, lifecycle_service))
     app.include_router(audit_router(sessions, current_user))
+    app.include_router(realtime_router(sessions, publisher))
+    app.state.realtime_publisher = publisher
 
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:

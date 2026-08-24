@@ -1,6 +1,7 @@
 import type { VitalObservation } from "../contracts/vitals";
 import type { AutomaticRefreshInterval, RefreshConfiguration } from "../contracts/configuration";
 import type { Prediction } from "../contracts/predictions";
+import type { Alert, AlertEvent, AuditEvent } from "../contracts/alerts";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
 let accessToken: string | null = localStorage.getItem("acuitynet.access_token");
@@ -15,6 +16,17 @@ export async function login(username: string, password: string): Promise<Session
 export async function getCurrentUser(): Promise<AuthUser> { return getJson<AuthUser>("/api/v1/auth/me"); }
 export async function logout(): Promise<void> { try { await getJson<void>("/api/v1/auth/logout", { method: "POST" }); } finally { clearSession(); } }
 export function getPrediction(patientId: string): Promise<Prediction> { return getJson<Prediction>(`/api/v1/patients/${encodeURIComponent(patientId)}/prediction`); }
+export function getCurrentAlert(patientId: string): Promise<Alert | null> { return getJson<Alert | null>(`/api/v1/patients/${encodeURIComponent(patientId)}/alert`); }
+export function getAlertEvents(patientId: string): Promise<AlertEvent[]> { return getJson<AlertEvent[]>(`/api/v1/patients/${encodeURIComponent(patientId)}/alert/events`); }
+export async function getAlertAudit(patientId: string): Promise<AuditEvent[]> {
+  const result = await getJson<{ events: AuditEvent[] }>(`/api/v1/patients/${encodeURIComponent(patientId)}/audit`);
+  return result.events;
+}
+export function getAccessToken(): string | null { return accessToken; }
+export function realtimeUrl(patientId: string): string {
+  const base = API_BASE_URL.replace(/^http/, "ws");
+  return `${base}/api/v1/patients/${encodeURIComponent(patientId)}/realtime?access_token=${encodeURIComponent(accessToken ?? "")}`;
+}
 
 export async function getCurrentVitals(patientId: string): Promise<VitalObservation> {
   const response = await fetch(`${API_BASE_URL}/api/v1/patients/${encodeURIComponent(patientId)}/vitals/current`, { headers: authHeaders() });
