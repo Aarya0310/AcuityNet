@@ -67,7 +67,7 @@ Requirement ownership:
   5. An Admin can change prototype thresholds, refresh settings, and research configuration and inspect the operational KPIs and controls available to that role.
 
 **Rationale**: Identity and server-side policy are prerequisites for meaningful role-specific views, while the prediction adapter supplies the stable input to every later workflow.
-**Plans:** 6 plans
+**Plans:** 8 plans
 Plans:
 
 - [ ] 02-01-PLAN.md - Migration-backed seeded identity, JWT sessions, and reset/reseed foundation
@@ -75,7 +75,9 @@ Plans:
 - [ ] 02-03-PLAN.md - Stable prediction adapter, deterministic fallback, and Clinical Prognosticator
 - [ ] 02-04-PLAN.md - Admin management, typed configuration, and prediction wiring
 - [ ] 02-05-PLAN.md - Typed Admin KPI read model and dashboard
-- [ ] 02-06-PLAN.md - Role dashboards, Phase 2 smoke path, and reset/reseed verification
+- [ ] 02-06-PLAN.md - Primary role dashboards and navigation composition
+- [ ] 02-07-PLAN.md - Admin repository and typed configuration persistence expansion
+- [ ] 02-08-PLAN.md - Phase 2 integration, secret-safe smoke, and reproducibility verification
 **UI hint**: yes
 
 ### Phase 3: Monitoring, Alerts, Lifecycle, and Audit
@@ -139,7 +141,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Safety, Simulation, and Backend Contracts | 6/6 | Complete    | 2026-08-24 |
-| 2. Identity, Authorization, and Prediction Adapter | 0/TBD | Not started | - |
+| 2. Identity, Authorization, and Prediction Adapter | 0/8 | Not started | - |
 | 3. Monitoring, Alerts, Lifecycle, and Audit | 0/TBD | Not started | - |
 | 4. Medical Historian and Human-Confirmed Dispatch | 0/TBD | Not started | - |
 | 5. End-to-End Verification and Demo Hardening | 0/TBD | Not started | - |
