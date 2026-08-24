@@ -19,7 +19,7 @@
 
 - [x] **VITAL-01**: Authorized users can view P-1042's current bed, SpO2, heart rate, respiratory rate, systolic/diastolic blood pressure, temperature, timestamp, and freshness state.
 - [x] **VITAL-02**: The synthetic scenario updates P-1042 vitals approximately every 5–10 seconds when automatic refresh is enabled, and the user can manually refresh or choose a supported interval.
-- [ ] **VITAL-03**: The monitoring UI visibly identifies the feed as simulated and represents disconnected or stale data without implying current bedside truth.
+- [x] **VITAL-03**: The monitoring UI visibly identifies the feed as simulated and represents disconnected or stale data without implying current bedside truth.
 - [ ] **PRED-01**: The prediction API exposes a stable payload containing patient, bed, prediction event, probability, risk score, risk level, horizon, timestamp, provenance, and model/rule version metadata.
 - [ ] **PRED-02**: The prediction adapter uses the existing ML pipeline when available and a deterministic, clearly labeled fallback when it is unavailable.
 - [ ] **PRED-03**: Authorized users can view P-1042's current risk, predicted event, probability, horizon, and prediction source in the Clinical Prognosticator.
@@ -61,7 +61,7 @@
 - [ ] **REAL-02**: The application provides an honest operational state for loading, stale, disconnected, unavailable-fallback, and no-candidate conditions.
 - [ ] **TEST-01**: Automated backend and frontend tests cover login, role/resource authorization, synthetic feed behavior, prediction fallback, alert generation/deduplication, lifecycle transitions, historian retrieval, dispatch ranking, nurse actions, and audit recording.
 - [ ] **TEST-02**: A clean local setup using SQLite migrations and seeded data can reproduce the P-1042 journey from deterioration through resolution, including a documented demo reset or setup path.
-- [ ] **SAFE-01**: User-facing prediction, contextual risk, alert, and dispatch surfaces clearly state that AcuityNet is a research prototype using simulated ICU data and do not provide diagnosis or treatment advice.
+- [x] **SAFE-01**: User-facing prediction, contextual risk, alert, and dispatch surfaces clearly state that AcuityNet is a research prototype using simulated ICU data and do not provide diagnosis or treatment advice.
 
 ## v2 Requirements
 
@@ -123,7 +123,7 @@
 | DATA-02 | Phase 1 | Complete |
 | VITAL-01 | Phase 1 | Complete |
 | VITAL-02 | Phase 1 | Complete |
-| VITAL-03 | Phase 1 | Pending |
+| VITAL-03 | Phase 1 | Complete |
 | PRED-01 | Phase 2 | Pending |
 | PRED-02 | Phase 2 | Pending |
 | PRED-03 | Phase 2 | Pending |
@@ -153,7 +153,7 @@
 | REAL-02 | Phase 3 | Pending |
 | TEST-01 | Phase 5 | Pending |
 | TEST-02 | Phase 5 | Pending |
-| SAFE-01 | Phase 1 | Pending |
+| SAFE-01 | Phase 1 | Complete |
 
 **Coverage:**
 
