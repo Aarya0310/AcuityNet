@@ -27,8 +27,8 @@
 
 ### Alerts and Audit Lifecycle
 
-- [ ] **ALRT-01**: A prediction crossing the configured research threshold creates a prioritized alert containing patient, bed, risk, event, probability, horizon, and provenance details.
-- [ ] **ALRT-02**: The alert engine prevents duplicate alert storms for the same active deterioration episode using configurable deduplication or cooldown behavior.
+- [x] **ALRT-01**: A prediction crossing the configured research threshold creates a prioritized alert containing patient, bed, risk, event, probability, horizon, and provenance details.
+- [x] **ALRT-02**: The alert engine prevents duplicate alert storms for the same active deterioration episode using configurable deduplication or cooldown behavior.
 - [x] **ALRT-03**: An alert follows validated lifecycle transitions from generated to dispatched/assigned, acknowledged, responded, and resolved; invalid or unauthorized transitions are rejected.
 - [x] **ALRT-04**: Each alert transition records the acting user, timestamp, resulting state, and relevant outcome data.
 - [x] **ALRT-05**: Admin and authorized clinical users can inspect the current alert state and ordered lifecycle evidence for P-1042.
@@ -128,8 +128,8 @@
 | PRED-02 | Phase 2 | Pending |
 | PRED-03 | Phase 2 | Pending |
 | PRED-04 | Phase 2 | Pending |
-| ALRT-01 | Phase 3 | Pending |
-| ALRT-02 | Phase 3 | Pending |
+| ALRT-01 | Phase 3 | Complete |
+| ALRT-02 | Phase 3 | Complete |
 | ALRT-03 | Phase 3 | Complete |
 | ALRT-04 | Phase 3 | Complete |
 | ALRT-05 | Phase 3 | Complete |
