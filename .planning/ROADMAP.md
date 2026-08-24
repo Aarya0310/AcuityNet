@@ -67,13 +67,14 @@ Requirement ownership:
   5. An Admin can change prototype thresholds, refresh settings, and research configuration and inspect the operational KPIs and controls available to that role.
 
 **Rationale**: Identity and server-side policy are prerequisites for meaningful role-specific views, while the prediction adapter supplies the stable input to every later workflow.
-**Plans**: 4 plans
+**Plans:** 5 plans
 Plans:
 
-- [ ] 02-01-PLAN.md - Seeded JWT identity, server-side authorization, and protected monitoring tracer
+- [ ] 02-01-PLAN.md - Migration-backed seeded identity, JWT sessions, and reset/reseed foundation
 - [ ] 02-02-PLAN.md - Stable prediction adapter, deterministic fallback, and Clinical Prognosticator
-- [ ] 02-03-PLAN.md - Admin typed configuration, research thresholds, and operational KPI controls
-- [ ] 02-04-PLAN.md - Role dashboards, navigation, Phase 2 smoke path, and setup verification
+- [ ] 02-03-PLAN.md - Admin management, typed configuration, prediction wiring, and KPI controls
+- [ ] 02-04-PLAN.md - Server authorization matrix, UI bypass protection, and frontend session guard
+- [ ] 02-05-PLAN.md - Role dashboards, Phase 2 smoke path, and reset/reseed verification
 **UI hint**: yes
 
 ### Phase 3: Monitoring, Alerts, Lifecycle, and Audit
