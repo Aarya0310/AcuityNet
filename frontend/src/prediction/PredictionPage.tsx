@@ -1,3 +1,3 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPrediction } from "../api/client";
-export function PredictionPage() { const query = useQuery({ queryKey: ["prediction", "P-1042"], queryFn: () => getPrediction("P-1042") }); if (query.isLoading) return <p>Loading prediction...</p>; if (query.isError) return <p>Prediction unavailable</p>; return <section><h2>Clinical Prognosticator</h2><p>{query.data.level} risk, {query.data.probability}</p><p>{query.data.source_kind}: {query.data.source_version}</p></section>; }
+export function PredictionPage() { const query = useQuery({ queryKey: ["prediction", "P-1042"], queryFn: () => getPrediction("P-1042") }); if (query.isLoading) return <p>Loading prediction...</p>; if (query.isError || !query.data) return <p>Prediction unavailable</p>; return <section><h2>Clinical Prognosticator</h2><p>{query.data.level} risk, {query.data.probability}</p><p>{query.data.source_kind}: {query.data.source_version}</p></section>; }
