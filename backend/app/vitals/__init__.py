@@ -1,0 +1,1 @@
+"""Deterministic synthetic vital scenario and persistence services."""

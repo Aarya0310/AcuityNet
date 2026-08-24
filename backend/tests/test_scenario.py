@@ -5,6 +5,7 @@ from sqlalchemy import select
 
 from backend.app.persistence.database import make_engine, migrate_database, session_factory
 from backend.app.persistence.models import VitalObservation
+from backend.app.seed.demo_data import seed_demo_data
 from backend.app.vitals.scenario import P1042Scenario
 from backend.app.vitals.service import ObservationService
 
@@ -37,6 +38,8 @@ def test_service_persists_injected_time_and_immutable_ticks(tmp_path):
     service = ObservationService(P1042Scenario(seed="p1042-demo"))
     timestamp = datetime(2026, 1, 1, 12, 0, tzinfo=timezone.utc)
 
+    with sessions() as session:
+        seed_demo_data(session)
     with sessions.begin() as session:
         first = service.advance(session, "P-1042", 0, timestamp)
         repeated = service.advance(session, "P-1042", 0, timestamp)
