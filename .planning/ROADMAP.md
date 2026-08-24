@@ -33,7 +33,7 @@ AcuityNet v1 delivers one safe, reproducible P-1042 journey: seeded users observ
   4. Monitoring and prediction-related surfaces identify the system as a simulated ICU research prototype and do not present the feed as bedside truth or clinical advice.
 
 **Rationale**: Safety labeling, provenance, deterministic simulation, and schema boundaries must exist before risk and alert behavior can be trusted in a demonstration.
-**Plans:** 5/6 plans executed
+**Plans:** 6/6 plans executed
 Plans:
 
 - [x] 01-01-PLAN.md - Backend walking skeleton, migration, and minimal P-1042 prerequisite
@@ -41,7 +41,7 @@ Plans:
 - [x] 01-03-PLAN.md - Typed monitoring, freshness, and interval contracts
 - [x] 01-04-PLAN.md - Frontend bootstrap, typed monitoring, and safety-state presentation
 - [x] 01-05-PLAN.md - Server-driven refresh controls and reusable safety presentation on the Plan 04 scaffold
-- [ ] 01-06-PLAN.md - Safety regression, clean-reset documentation, and full-stack smoke verification
+- [x] 01-06-PLAN.md - Safety regression, clean-reset documentation, and full-stack smoke verification
 
 Requirement ownership:
 
@@ -130,7 +130,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Safety, Simulation, and Backend Contracts | 5/6 | In Progress|  |
+| 1. Safety, Simulation, and Backend Contracts | 6/6 | In Progress|  |
 | 2. Identity, Authorization, and Prediction Adapter | 0/TBD | Not started | - |
 | 3. Monitoring, Alerts, Lifecycle, and Audit | 0/TBD | Not started | - |
 | 4. Medical Historian and Human-Confirmed Dispatch | 0/TBD | Not started | - |
