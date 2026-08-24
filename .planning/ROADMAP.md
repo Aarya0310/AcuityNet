@@ -78,6 +78,7 @@ Plans:
 - [x] 02-05-PLAN.md - Typed Admin KPI read model and dashboard
 - [x] 02-06-PLAN.md - Primary role dashboards and navigation composition
 - [x] 02-08-PLAN.md - Phase 2 integration, secret-safe smoke, and reproducibility verification
+
 **UI hint**: yes
 
 ### Phase 3: Monitoring, Alerts, Lifecycle, and Audit
@@ -96,13 +97,14 @@ Plans:
   5. A disconnected, stale, loading, unavailable-fallback, or no-candidate operational state is visible, and a page reload or WebSocket reconnect recovers authoritative state through REST.
 
 **Rationale**: The core value is a traceable deterioration-to-resolution workflow; lifecycle correctness, freshness, and audit persistence must be established before dispatch actions are layered on top.
-**Plans:** 4 plans revised 2026-08-24 after checker blockers
+**Plans:** 1/4 plans executed revised 2026-08-24 after checker blockers
 Plans:
 
 - [ ] 03-01-PLAN.md - Threshold-backed alert persistence and deduplication
-- [ ] 03-02-PLAN.md - Validated alert lifecycle and ordered audit evidence
+- [x] 03-02-PLAN.md - Validated alert lifecycle and ordered audit evidence
 - [ ] 03-03-PLAN.md - REST-authoritative realtime recovery and honest operational UI
 - [ ] 03-04-PLAN.md - Reset/reseed, integration proof, and secret-safe smoke verification
+
 **UI hint**: yes
 
 ### Phase 4: Medical Historian and Human-Confirmed Dispatch
@@ -149,7 +151,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Safety, Simulation, and Backend Contracts | 6/6 | Complete    | 2026-08-24 |
 | 2. Identity, Authorization, and Prediction Adapter | 8/8 | Executed with verification blockers | 2026-08-24 |
-| 3. Monitoring, Alerts, Lifecycle, and Audit | 0/4 | Planned | 2026-08-24 |
+| 3. Monitoring, Alerts, Lifecycle, and Audit | 1/4 | In Progress|  |
 | 4. Medical Historian and Human-Confirmed Dispatch | 0/TBD | Not started | - |
 | 5. End-to-End Verification and Demo Hardening | 0/TBD | Not started | - |
 

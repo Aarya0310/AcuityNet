@@ -29,10 +29,10 @@
 
 - [ ] **ALRT-01**: A prediction crossing the configured research threshold creates a prioritized alert containing patient, bed, risk, event, probability, horizon, and provenance details.
 - [ ] **ALRT-02**: The alert engine prevents duplicate alert storms for the same active deterioration episode using configurable deduplication or cooldown behavior.
-- [ ] **ALRT-03**: An alert follows validated lifecycle transitions from generated to dispatched/assigned, acknowledged, responded, and resolved; invalid or unauthorized transitions are rejected.
-- [ ] **ALRT-04**: Each alert transition records the acting user, timestamp, resulting state, and relevant outcome data.
-- [ ] **ALRT-05**: Admin and authorized clinical users can inspect the current alert state and ordered lifecycle evidence for P-1042.
-- [ ] **AUDT-01**: The system records important authenticated actions, including assignment, configuration changes, alert actions, denied access outcomes, and lifecycle transitions, in an ordered audit view.
+- [x] **ALRT-03**: An alert follows validated lifecycle transitions from generated to dispatched/assigned, acknowledged, responded, and resolved; invalid or unauthorized transitions are rejected.
+- [x] **ALRT-04**: Each alert transition records the acting user, timestamp, resulting state, and relevant outcome data.
+- [x] **ALRT-05**: Admin and authorized clinical users can inspect the current alert state and ordered lifecycle evidence for P-1042.
+- [x] **AUDT-01**: The system records important authenticated actions, including assignment, configuration changes, alert actions, denied access outcomes, and lifecycle transitions, in an ordered audit view.
 
 ### Medical Context and Clinical Review
 
@@ -130,10 +130,10 @@
 | PRED-04 | Phase 2 | Pending |
 | ALRT-01 | Phase 3 | Pending |
 | ALRT-02 | Phase 3 | Pending |
-| ALRT-03 | Phase 3 | Pending |
-| ALRT-04 | Phase 3 | Pending |
-| ALRT-05 | Phase 3 | Pending |
-| AUDT-01 | Phase 3 | Pending |
+| ALRT-03 | Phase 3 | Complete |
+| ALRT-04 | Phase 3 | Complete |
+| ALRT-05 | Phase 3 | Complete |
+| AUDT-01 | Phase 3 | Complete |
 | HIST-01 | Phase 4 | Pending |
 | HIST-02 | Phase 4 | Pending |
 | HIST-03 | Phase 4 | Pending |
