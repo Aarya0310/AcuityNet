@@ -9,6 +9,24 @@ AlertPriority = Literal["high", "critical"]
 DeduplicationStatus = Literal["new_alert", "reused_active", "suppressed_cooldown", "rearmed"]
 
 
+class AlertLifecycleCommand(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    action: Literal["assign", "acknowledge", "respond", "resolve"]
+    assignment_id: str | None = Field(default=None, min_length=1, max_length=32)
+    assignment_evidence: str | None = Field(default=None, min_length=1, max_length=240)
+    note: str | None = Field(default=None, min_length=1, max_length=500)
+    correlation_id: str | None = Field(default=None, min_length=1, max_length=80)
+
+
+class AlertEventResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    event_id: int
+    sequence: int
+    state: Literal["generated", "assigned", "acknowledged", "responded", "resolved"]
+    outcome: str
+    occurred_at: datetime
+
+
 class AlertResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
     alert_id: int
@@ -33,3 +51,5 @@ class AlertResponse(BaseModel):
     rule_version: str
     deduplication_status: DeduplicationStatus
     created_at: datetime
+    assignment_id: str | None = None
+    events: list[AlertEventResponse] = Field(default_factory=list)

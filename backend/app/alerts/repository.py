@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from backend.app.persistence.models import Alert, PredictionEvidence
+from backend.app.persistence.models import Alert, AlertEvent, PredictionEvidence
 
 
 class AlertRepository:
@@ -22,3 +22,6 @@ class AlertRepository:
 
     def evidence_for(self, alert: Alert):
         return self.session.get(PredictionEvidence, alert.evidence_id)
+
+    def events_for(self, alert_id: int):
+        return list(self.session.scalars(select(AlertEvent).where(AlertEvent.alert_id == alert_id).order_by(AlertEvent.occurred_at.asc(), AlertEvent.event_id.asc())))

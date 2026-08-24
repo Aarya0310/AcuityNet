@@ -5,15 +5,20 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from backend.app.admin.configuration import effective_settings
-from backend.app.contracts.alerts import AlertResponse
+from backend.app.contracts.alerts import AlertEventResponse, AlertResponse
 from backend.app.persistence.models import Alert, AlertEvent, PredictionEvidence, VitalObservation
 from backend.app.alerts.repository import AlertRepository
 
 
 class AlertService:
-    def __init__(self, adapter, clock):
+    def __init__(self, adapter, clock, audit_service=None, publisher=None):
         self.adapter = adapter
         self.clock = clock
+        self.audit_service = audit_service
+        self.publisher = publisher
+
+    def repository(self, session):
+        return AlertRepository(session)
 
     def evaluate_prediction(self, session: Session, observation: VitalObservation, vitals, settings=None):
         settings = settings or effective_settings(session)
@@ -55,9 +60,18 @@ class AlertService:
                 raise
             return self.to_response(session, active, "reused_active")
         session.add(AlertEvent(alert_id=alert.alert_id, state="generated", outcome=status, occurred_at=alert.created_at))
+        if self.audit_service:
+            audit = self.audit_service.record(session, actor_id=None, action="alert.generated", resource_type="patient", resource_id=alert.patient_id, outcome="success", details={"patient_id": alert.patient_id, "alert_id": alert.alert_id, "resulting_state": "generated", "correlation_id": f"alert-{alert.alert_id}"}, occurred_at=alert.created_at)
+            if self.publisher:
+                self.publisher.publish_after_commit(session, {"event": "alert.invalidated", "patient_id": alert.patient_id, "alert_id": alert.alert_id, "audit_id": audit.audit_id})
         return self.to_response(session, alert, status)
 
     def to_response(self, session, alert, status):
         evidence = AlertRepository(session).evidence_for(alert)
         alert.deduplication_status = status
-        return AlertResponse(alert_id=alert.alert_id, patient_id=alert.patient_id, bed_id=alert.bed_id, priority=alert.priority, state=alert.state, risk_score=evidence.score, risk_level=evidence.level, event=evidence.event, probability=evidence.probability, horizon_minutes=evidence.horizon_minutes, observation_sequence=evidence.observation_sequence, timestamp=evidence.server_timestamp, provenance={"source_kind": evidence.synthetic_source_kind, "source_name": evidence.synthetic_source_name, "scenario_id": evidence.synthetic_scenario_id, "scenario_version": evidence.synthetic_scenario_version, "is_live_bedside_feed": False}, prototype_label=evidence.prototype_label, prediction_source_kind=evidence.source_kind, prediction_source_version=evidence.source_version, fallback_reason=evidence.fallback_reason, prediction_contract_version=evidence.prediction_contract_version, effective_threshold=evidence.effective_threshold, rule_version=evidence.rule_version, deduplication_status=status, created_at=alert.created_at)
+        events = [AlertEventResponse(event_id=item.event_id, sequence=index, state=item.state, outcome=item.outcome, occurred_at=item.occurred_at) for index, item in enumerate(AlertRepository(session).events_for(alert.alert_id), start=1)]
+        assignment_id = None
+        if self.audit_service:
+            from backend.app.alerts.lifecycle import AlertLifecycleService
+            assignment_id = AlertLifecycleService(self.clock, self.audit_service).assignment_id(session, alert.alert_id)
+        return AlertResponse(alert_id=alert.alert_id, patient_id=alert.patient_id, bed_id=alert.bed_id, priority=alert.priority, state=alert.state, risk_score=evidence.score, risk_level=evidence.level, event=evidence.event, probability=evidence.probability, horizon_minutes=evidence.horizon_minutes, observation_sequence=evidence.observation_sequence, timestamp=evidence.server_timestamp, provenance={"source_kind": evidence.synthetic_source_kind, "source_name": evidence.synthetic_source_name, "scenario_id": evidence.synthetic_scenario_id, "scenario_version": evidence.synthetic_scenario_version, "is_live_bedside_feed": False}, prototype_label=evidence.prototype_label, prediction_source_kind=evidence.source_kind, prediction_source_version=evidence.source_version, fallback_reason=evidence.fallback_reason, prediction_contract_version=evidence.prediction_contract_version, effective_threshold=evidence.effective_threshold, rule_version=evidence.rule_version, deduplication_status=status, created_at=alert.created_at, assignment_id=assignment_id, events=events)

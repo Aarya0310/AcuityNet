@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from datetime import datetime, timezone
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 
@@ -33,6 +33,11 @@ from backend.app.transport.predictions import prediction_router
 from backend.app.transport.admin import admin_router
 from backend.app.alerts.service import AlertService
 from backend.app.transport.alerts import alert_router
+from backend.app.alerts.lifecycle import AlertLifecycleService
+from backend.app.audit.service import AuditService
+from backend.app.realtime.publisher import RealtimePublisher
+from backend.app.transport.audit import audit_router
+from backend.app.auth.service import load_token_user
 
 
 def create_app(
@@ -46,7 +51,10 @@ def create_app(
         seed_demo_data(session)
     observation_service = ObservationService(P1042Scenario())
     now = clock or (lambda: datetime.now(timezone.utc))
-    alert_service = AlertService(PredictionAdapter(), now)
+    audit_service = AuditService(now)
+    publisher = RealtimePublisher()
+    alert_service = AlertService(PredictionAdapter(), now, audit_service, publisher)
+    lifecycle_service = AlertLifecycleService(now, audit_service, publisher)
 
     app = FastAPI(title="AcuityNet Research Prototype")
     app.include_router(auth_router(sessions))
@@ -57,6 +65,25 @@ def create_app(
         allow_methods=["GET", "POST"],
         allow_headers=["*"],
     )
+
+    @app.exception_handler(HTTPException)
+    def audit_denial(request: Request, error: HTTPException):
+        if error.status_code in {401, 403}:
+            actor_id = None
+            authorization = request.headers.get("authorization", "")
+            if authorization.startswith("Bearer "):
+                try:
+                    with sessions() as lookup_session:
+                        actor_id = load_token_user(lookup_session, authorization[7:]).user_id
+                except Exception:
+                    actor_id = None
+            path_parts = request.url.path.strip("/").split("/")
+            resource_id = next((part for part in path_parts if part.startswith("P-")), None)
+            resource_type = "patient" if resource_id else "route"
+            with sessions.begin() as audit_session:
+                audit_service.record_denial(audit_session, actor_id=actor_id, action="access.denied", resource_type=resource_type, resource_id=resource_id, status_code=error.status_code)
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=error.status_code, content={"detail": error.detail}, headers=error.headers)
 
     def response_for(
         row: VitalObservation,
@@ -100,8 +127,9 @@ def create_app(
         )
 
     app.include_router(prediction_router(sessions, current_user, response_for, PredictionAdapter()))
-    app.include_router(admin_router(sessions, current_user))
-    app.include_router(alert_router(sessions, current_user, alert_service))
+    app.include_router(admin_router(sessions, current_user, audit_service))
+    app.include_router(alert_router(sessions, current_user, alert_service, lifecycle_service))
+    app.include_router(audit_router(sessions, current_user))
 
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:

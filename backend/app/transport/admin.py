@@ -9,7 +9,7 @@ from backend.app.persistence.models import Bed, Nurse, User
 from backend.app.seed.demo_data import password_digest
 
 
-def admin_router(sessions, current_user):
+def admin_router(sessions, current_user, audit_service=None):
     router = APIRouter(prefix="/api/v1/admin")
     def admin(user=Depends(current_user)):
         if user.role != "admin": raise HTTPException(status_code=403, detail="Forbidden")
@@ -34,6 +34,8 @@ def admin_router(sessions, current_user):
         with sessions.begin() as s:
             try:
                 values = update_typed_configuration(s, request.model_dump())
+                if audit_service:
+                    audit_service.record(s, actor_id=_.user_id, action="configuration.risk_thresholds", resource_type="configuration", resource_id="risk-thresholds", outcome="success", details={"correlation_id": "configuration.risk-thresholds"})
                 return AlertConfigurationResponse.model_validate({key: values[key] for key in AlertConfigurationResponse.model_fields})
             except ValueError as error: raise HTTPException(status_code=422, detail=str(error)) from error
     @router.patch("/configuration/research-rules", response_model=AlertConfigurationResponse)
@@ -41,6 +43,8 @@ def admin_router(sessions, current_user):
         with sessions.begin() as s:
             try:
                 values = update_typed_configuration(s, request.model_dump())
+                if audit_service:
+                    audit_service.record(s, actor_id=_.user_id, action="configuration.research_rules", resource_type="configuration", resource_id="research-rules", outcome="success", details={"correlation_id": "configuration.research-rules"})
                 return AlertConfigurationResponse.model_validate({key: values[key] for key in AlertConfigurationResponse.model_fields})
             except ValueError as error: raise HTTPException(status_code=422, detail=str(error)) from error
     @router.patch("/configuration/refresh")
