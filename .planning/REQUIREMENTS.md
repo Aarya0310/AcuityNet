@@ -17,8 +17,8 @@
 
 ### Monitoring and Prediction
 
-- [ ] **VITAL-01**: Authorized users can view P-1042's current bed, SpO2, heart rate, respiratory rate, systolic/diastolic blood pressure, temperature, timestamp, and freshness state.
-- [ ] **VITAL-02**: The synthetic scenario updates P-1042 vitals approximately every 5–10 seconds when automatic refresh is enabled, and the user can manually refresh or choose a supported interval.
+- [x] **VITAL-01**: Authorized users can view P-1042's current bed, SpO2, heart rate, respiratory rate, systolic/diastolic blood pressure, temperature, timestamp, and freshness state.
+- [x] **VITAL-02**: The synthetic scenario updates P-1042 vitals approximately every 5–10 seconds when automatic refresh is enabled, and the user can manually refresh or choose a supported interval.
 - [ ] **VITAL-03**: The monitoring UI visibly identifies the feed as simulated and represents disconnected or stale data without implying current bedside truth.
 - [ ] **PRED-01**: The prediction API exposes a stable payload containing patient, bed, prediction event, probability, risk score, risk level, horizon, timestamp, provenance, and model/rule version metadata.
 - [ ] **PRED-02**: The prediction adapter uses the existing ML pipeline when available and a deterministic, clearly labeled fallback when it is unavailable.
@@ -121,8 +121,8 @@
 | UI-01 | Phase 2 | Pending |
 | DATA-01 | Phase 1 | Complete |
 | DATA-02 | Phase 1 | Complete |
-| VITAL-01 | Phase 1 | Pending |
-| VITAL-02 | Phase 1 | Pending |
+| VITAL-01 | Phase 1 | Complete |
+| VITAL-02 | Phase 1 | Complete |
 | VITAL-03 | Phase 1 | Pending |
 | PRED-01 | Phase 2 | Pending |
 | PRED-02 | Phase 2 | Pending |
