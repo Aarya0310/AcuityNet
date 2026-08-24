@@ -2,6 +2,7 @@ from collections.abc import Callable
 from datetime import datetime, timezone
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 
 from backend.app.contracts.configuration import RefreshConfiguration
@@ -40,6 +41,12 @@ def create_app(
     now = clock or (lambda: datetime.now(timezone.utc))
 
     app = FastAPI(title="AcuityNet Research Prototype")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
+        allow_methods=["GET", "POST"],
+        allow_headers=["*"],
+    )
 
     def response_for(
         row: VitalObservation,

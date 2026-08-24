@@ -21,7 +21,7 @@ AcuityNet v1 delivers one safe, reproducible P-1042 journey: seeded users observ
 
 ### Phase 1: Safety, Simulation, and Backend Contracts
 
-**Goal**: Users can inspect a reproducible P-1042 synthetic ICU scenario through truthful, typed, migration-backed patient and vital contracts.
+**Goal**: As a developer, I can open a reproducible P-1042 synthetic ICU scenario and inspect truthful, typed, migration-backed patient and vital contracts.
 **Mode**: mvp
 **Depends on**: Nothing (first phase)
 **Requirements**: DATA-01, DATA-02, VITAL-01, VITAL-02, VITAL-03, SAFE-01
