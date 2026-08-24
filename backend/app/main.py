@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from datetime import datetime, timezone
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 
@@ -27,6 +27,9 @@ from backend.app.safety.labels import (
     SYNTHETIC_SOURCE_NAME,
 )
 from backend.app.transport.auth import auth_router
+from backend.app.auth.policy import get_current_user, require_patient_access, require_roles, require_nurse_assignment
+from backend.app.prediction.adapter import PredictionAdapter
+from backend.app.transport.predictions import prediction_router
 
 
 def create_app(
@@ -43,6 +46,7 @@ def create_app(
 
     app = FastAPI(title="AcuityNet Research Prototype")
     app.include_router(auth_router(sessions))
+    current_user = get_current_user(sessions)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
@@ -91,6 +95,8 @@ def create_app(
             prototype_label=PROTOTYPE_LABEL,
         )
 
+    app.include_router(prediction_router(sessions, current_user, response_for, PredictionAdapter()))
+
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:
         return health_response()
@@ -108,9 +114,9 @@ def create_app(
                 raise HTTPException(status_code=500, detail=str(error)) from error
 
     @app.post("/api/v1/patients/{patient_id}/vitals/advance", response_model=VitalObservationResponse)
-    def advance(patient_id: str, request: AdvanceRequest):
-        if patient_id != "P-1042":
-            raise HTTPException(status_code=404, detail="Patient not found")
+    def advance(patient_id: str, request: AdvanceRequest, user=Depends(current_user)):
+        require_roles("admin")(user)
+        require_patient_access(user, patient_id)
         with sessions.begin() as session:
             timestamp = now()
             tick = request.tick
@@ -132,7 +138,9 @@ def create_app(
             return response_for(row, patient, bed)
 
     @app.get("/api/v1/patients/{patient_id}/vitals/current", response_model=VitalObservationResponse)
-    def current(patient_id: str):
+    def current(patient_id: str, user=Depends(current_user)):
+        require_patient_access(user, patient_id)
+        require_nurse_assignment(user, patient_id)
         with sessions() as session:
             row = session.scalar(select(VitalObservation).where(VitalObservation.patient_id == patient_id).order_by(VitalObservation.sequence.desc()))
             if row is None:
