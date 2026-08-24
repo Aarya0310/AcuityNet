@@ -1,0 +1,12 @@
+{
+  "ecosystem": "python",
+  "config": {"exa_search": false, "brave_search": false, "firecrawl": false, "tavily_search": false},
+  "questions": [
+    {"text": "Current SQLAlchemy 2 ORM session and SQLite foreign-key/migration patterns for a SQLite-first application", "kind": "docs", "library": "sqlalchemy", "version": "2.0"},
+    {"text": "Current Alembic migration and SQLite batch mode patterns", "kind": "docs", "library": "alembic", "version": "1.19"},
+    {"text": "FastAPI and Pydantic typed request/response model patterns for REST APIs and WebSocket lifecycle", "kind": "docs", "library": "fastapi", "version": "latest"},
+    {"text": "React and Vite patterns for polling, external WebSocket subscriptions, cleanup, and stale state", "kind": "docs", "library": "react", "version": "19"},
+    {"text": "Deterministic synthetic time-series simulation design and testing for reproducible demo fixtures", "kind": "web"},
+    {"text": "Research prototype safety labeling and provenance practices for synthetic clinical monitoring interfaces", "kind": "web"}
+  ]
+}

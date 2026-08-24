@@ -1,0 +1,1 @@
+{"content":"MIMIC-IV is documented as retrospective research data distributed through PhysioNet. AcuityNet must separate it from synthetic live-like feeds using provenance, timestamps, replay labels, and endpoint constraints.","source":"web","provider":"websearch","confidence":"MEDIUM","fetched_at":"2026-08-24T08:23:22.975Z","ttl":86400000,"kind":"web"}
