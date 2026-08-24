@@ -8,7 +8,7 @@
 ## Scope And Invariants
 
 - [x] Phase 2 remains limited to AUTH-01 through AUTH-04, UI-01, PRED-01 through PRED-04, and ADMIN-01 through ADMIN-02.
-- [x] Dependencies remain `02-01` -> `02-02` -> `02-03` -> `02-04` -> `02-05` -> `02-07` -> `02-06` -> `02-08`; waves remain 1 through 7.
+- [x] Dependencies remain `02-01` -> `02-02` -> `02-03` -> `02-04`, then parallel Wave 5 plans `02-05` and `02-07`, followed by `02-06` and `02-08`; waves remain 1 through 7.
 - [x] Exactly three seeded demo accounts remain: Admin, Doctor, and assigned Nurse Sarah.
 - [x] The unassigned Nurse remains a deterministic persisted test-only fixture, excluded from demo seed and demo account counts.
 - [x] Research decisions, synthetic provenance, prototype labeling, deterministic fallback, human confirmation boundaries, REST authority, and deferred later-phase entities remain preserved.
