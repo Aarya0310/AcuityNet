@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, UniqueConstraint
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
@@ -21,6 +21,17 @@ class Bed(Base):
     patient_id: Mapped[str] = mapped_column(ForeignKey("patients.patient_id"), unique=True)
 
 
+class User(Base):
+    __tablename__ = "users"
+    user_id: Mapped[str] = mapped_column(String(32), primary_key=True)
+    username: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    display_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    role: Mapped[str] = mapped_column(String(16), nullable=False)
+    password_digest: Mapped[str] = mapped_column(String(256), nullable=False)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    nurse: Mapped["Nurse | None"] = relationship(back_populates="user", uselist=False)
+
+
 class Admission(Base):
     __tablename__ = "admissions"
     admission_id: Mapped[str] = mapped_column(String(32), primary_key=True)
@@ -33,6 +44,8 @@ class Nurse(Base):
     nurse_id: Mapped[str] = mapped_column(String(32), primary_key=True)
     display_name: Mapped[str] = mapped_column(String(120), nullable=False)
     available: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    user_id: Mapped[str | None] = mapped_column(ForeignKey("users.user_id"), unique=True)
+    user: Mapped[User | None] = relationship(back_populates="nurse")
 
 
 class History(Base):

@@ -8,11 +8,12 @@ from backend.app.persistence.models import (
     History,
     Nurse,
     Patient,
+    User,
     VitalObservation,
 )
 
 
 def reset_demo_data(session: Session) -> None:
-    for model in (VitalObservation, Admission, History, Bed, Nurse, Configuration, Patient):
+    for model in (VitalObservation, Admission, History, Bed, Nurse, User, Configuration, Patient):
         session.execute(delete(model))
     session.flush()

@@ -26,6 +26,7 @@ from backend.app.safety.labels import (
     SYNTHETIC_SOURCE_KIND,
     SYNTHETIC_SOURCE_NAME,
 )
+from backend.app.transport.auth import auth_router
 
 
 def create_app(
@@ -41,6 +42,7 @@ def create_app(
     now = clock or (lambda: datetime.now(timezone.utc))
 
     app = FastAPI(title="AcuityNet Research Prototype")
+    app.include_router(auth_router(sessions))
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
