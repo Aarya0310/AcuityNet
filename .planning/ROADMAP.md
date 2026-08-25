@@ -122,7 +122,25 @@ Plans:
   5. The assigned Nurse can see only assigned work, then acknowledge the alert, record a response note, and resolve it; an unassigned Nurse cannot mutate or inspect outside the permitted assignment scope.
 
 **Rationale**: Historian context and dispatch require stable predictions and alert acuity; human confirmation and assignment-scoped nurse actions preserve the project's non-autonomous safety boundary.
-**Plans**: TBD
+**Plans**: 6 plans
+Plans:
+
+- [ ] 04-01-PLAN.md - Historian persistence, deterministic context rules, and protected REST projection
+- [ ] 04-02-PLAN.md - Historian and Doctor evidence-timeline interface
+- [ ] 04-03-PLAN.md - Dispatch persistence, eligibility ranking, and human confirmation
+- [ ] 04-04-PLAN.md - Admin/Doctor dispatch comparison and decision controls
+- [ ] 04-05-PLAN.md - Assignment-scoped Nurse workflow and lifecycle actions
+- [ ] 04-06-PLAN.md - Phase 4 reset, migration coverage, and isolated E2E replay
+
+Requirement ownership:
+
+- HIST-01, HIST-02, HIST-03: 04-01
+- HIST-04, HIST-05: 04-02
+- DISP-01, DISP-02, DISP-04: 04-03
+- DISP-03, DISP-05: 04-04
+- NURS-01, NURS-02, NURS-03: 04-05
+- 04-06 provides reset and end-to-end verification expansion without claiming additional Phase 4 requirement IDs.
+
 **UI hint**: yes
 
 ### Phase 5: End-to-End Verification and Demo Hardening
