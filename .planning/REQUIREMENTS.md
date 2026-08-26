@@ -44,10 +44,10 @@
 
 ### Tactical Dispatch and Nurse Workflow
 
-- [ ] **DISP-01**: The dispatcher filters nurses who are offline, on break, unavailable, or otherwise ineligible before ranking candidates.
-- [ ] **DISP-02**: The dispatcher ranks eligible nurses using transparent prototype weights of availability 40%, proximity 30%, workload 20%, and acuity compatibility 10%.
+- [x] **DISP-01**: The dispatcher filters nurses who are offline, on break, unavailable, or otherwise ineligible before ranking candidates.
+- [x] **DISP-02**: The dispatcher ranks eligible nurses using transparent prototype weights of availability 40%, proximity 30%, workload 20%, and acuity compatibility 10%.
 - [ ] **DISP-03**: Admin and Doctor users can inspect the recommended nurse, alternatives, score components, source freshness, and eligibility reasons.
-- [ ] **DISP-04**: Dispatch requires an explicit authorized human confirmation or override and records that decision; it is never an autonomous staffing command.
+- [x] **DISP-04**: Dispatch requires an explicit authorized human confirmation or override and records that decision; it is never an autonomous staffing command.
 - [ ] **DISP-05**: When no eligible nurse exists, the system displays that outcome, preserves the reason, and does not fabricate an assignment.
 - [ ] **NURS-01**: The assigned Nurse can see only assigned patients and alerts, including P-1042's current risk and relevant vitals.
 - [ ] **NURS-02**: The assigned Nurse can acknowledge the alert, mark a response, add a concise response note, and resolve the assigned work.
@@ -139,10 +139,10 @@
 | HIST-03 | Phase 4 | Complete |
 | HIST-04 | Phase 4 | Complete |
 | HIST-05 | Phase 4 | Complete |
-| DISP-01 | Phase 4 | Pending |
-| DISP-02 | Phase 4 | Pending |
+| DISP-01 | Phase 4 | Complete |
+| DISP-02 | Phase 4 | Complete |
 | DISP-03 | Phase 4 | Pending |
-| DISP-04 | Phase 4 | Pending |
+| DISP-04 | Phase 4 | Complete |
 | DISP-05 | Phase 4 | Pending |
 | NURS-01 | Phase 4 | Pending |
 | NURS-02 | Phase 4 | Pending |
