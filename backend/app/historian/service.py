@@ -98,26 +98,6 @@ class HistorianService:
             source_version=evidence.source_version,
             fallback_reason=evidence.fallback_reason,
         )
-
-    def _vitals_response(self, observation, patient, bed):
-        return VitalObservationResponse(
-            patient_id=observation.patient_id,
-            patient=PatientSummary(patient_id=patient.patient_id, display_name=patient.display_name, bed_id=bed.bed_id, unit=bed.unit),
-            bed_id=observation.bed_id,
-            unit=bed.unit,
-            sequence=observation.sequence,
-            observed_at=_utc(observation.observed_at),
-            received_at=_utc(observation.received_at),
-            spo2_percent=observation.spo2_percent,
-            heart_rate_bpm=observation.heart_rate_bpm,
-            respiratory_rate_bpm=observation.respiratory_rate_bpm,
-            systolic_bp_mmhg=observation.systolic_bp_mmhg,
-            diastolic_bp_mmhg=observation.diastolic_bp_mmhg,
-            temperature_c=observation.temperature_c,
-            provenance=SyntheticProvenance(source_kind="synthetic", source_name="acuitynet-simulator", scenario_id=observation.scenario_id, scenario_version=observation.scenario_version, is_live_bedside_feed=False),
-            freshness=resolve_freshness(observation.received_at, self.clock()),
-            prototype_label="Research prototype: simulated ICU data, not clinical advice.",
-        )
         annotations = list(session.scalars(select(TimelineAnnotation).where(TimelineAnnotation.patient_id == patient_id).order_by(TimelineAnnotation.created_at.asc(), TimelineAnnotation.annotation_id.asc())))
         alert = session.scalar(select(Alert).where(Alert.patient_id == patient_id).order_by(Alert.alert_id.desc()))
         timeline = self.timeline(session, patient_id, facts, evidence, alert, annotations, evaluations)
@@ -140,6 +120,26 @@ class HistorianService:
             timeline=timeline,
             prototype_label=evidence.prototype_label,
             provenance="research-prototype",
+        )
+
+    def _vitals_response(self, observation, patient, bed):
+        return VitalObservationResponse(
+            patient_id=observation.patient_id,
+            patient=PatientSummary(patient_id=patient.patient_id, display_name=patient.display_name, bed_id=bed.bed_id, unit=bed.unit),
+            bed_id=observation.bed_id,
+            unit=bed.unit,
+            sequence=observation.sequence,
+            observed_at=_utc(observation.observed_at),
+            received_at=_utc(observation.received_at),
+            spo2_percent=observation.spo2_percent,
+            heart_rate_bpm=observation.heart_rate_bpm,
+            respiratory_rate_bpm=observation.respiratory_rate_bpm,
+            systolic_bp_mmhg=observation.systolic_bp_mmhg,
+            diastolic_bp_mmhg=observation.diastolic_bp_mmhg,
+            temperature_c=observation.temperature_c,
+            provenance=SyntheticProvenance(source_kind="synthetic", source_name="acuitynet-simulator", scenario_id=observation.scenario_id, scenario_version=observation.scenario_version, is_live_bedside_feed=False),
+            freshness=resolve_freshness(observation.received_at, self.clock()),
+            prototype_label="Research prototype: simulated ICU data, not clinical advice.",
         )
 
     def timeline(self, session, patient_id, facts, evidence, alert, annotations, evaluations):
