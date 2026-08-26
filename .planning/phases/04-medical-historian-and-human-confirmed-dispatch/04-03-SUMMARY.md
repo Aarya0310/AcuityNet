@@ -15,7 +15,7 @@ affects: [phase-04, dispatch, lifecycle, audit]
 actuals:
   tokens: 1574
   tasks: 2
-  commits: 3
+  commits: 4
 
 tech-stack:
   added: []
@@ -89,6 +89,10 @@ Each task was committed atomically:
 
 1. **Task 1: Trace assigned Sarah Nurse work from server-derived assignment through response and resolution timeline** - `8d560ad` (feat)
 2. **Task 2: Prove assignment denial, reset integrity, no-candidate preservation, and full Phase 4 replay** - `7a6a294` (test)
+
+**Plan metadata:** `c742261` (docs: complete plan)
+
+**Ledger metadata:** recorded in the follow-up metadata commit.
 
 ## Files Created/Modified
 
