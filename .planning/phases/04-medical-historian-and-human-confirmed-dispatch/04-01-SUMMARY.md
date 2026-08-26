@@ -96,7 +96,7 @@ Each task was committed atomically:
 2. **Task 2 RED: Prove historian incompleteness, annotation immutability, migration, and access boundaries** - `55f6020` (test)
 3. **Task 2 GREEN: Enforce historian completeness semantics** - `8c65bb0` (feat)
 
-**Plan metadata:** pending final metadata commit
+**Plan metadata:** `24a545f` (docs: complete plan)
 
 ## Files Created/Modified
 
