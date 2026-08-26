@@ -142,3 +142,53 @@ class AuditEvent(Base):
     outcome: Mapped[str] = mapped_column(String(24), nullable=False)
     occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     details: Mapped[str] = mapped_column(String(1000), nullable=False, default="{}")
+
+
+class PatientContextFact(Base):
+    __tablename__ = "patient_context_facts"
+    fact_id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
+    category: Mapped[str] = mapped_column(String(20), nullable=False)
+    label: Mapped[str] = mapped_column(String(160), nullable=False)
+    value: Mapped[str | None] = mapped_column(String(120))
+    unit: Mapped[str | None] = mapped_column(String(32))
+    source_kind: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_name: Mapped[str] = mapped_column(String(80), nullable=False)
+    effective_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    is_complete: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+
+class HistorianRuleDefinition(Base):
+    __tablename__ = "historian_rule_definitions"
+    rule_id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    rule_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    category: Mapped[str] = mapped_column(String(20), nullable=False)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    version: Mapped[str] = mapped_column(String(40), nullable=False)
+    delta: Mapped[float] = mapped_column(Float, nullable=False)
+    explanation: Mapped[str] = mapped_column(String(240), nullable=False)
+    required: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+
+class HistorianRuleEvaluation(Base):
+    __tablename__ = "historian_rule_evaluations"
+    evaluation_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
+    evidence_id: Mapped[int] = mapped_column(ForeignKey("prediction_evidence.evidence_id"), nullable=False)
+    rule_id: Mapped[str] = mapped_column(ForeignKey("historian_rule_definitions.rule_id"), nullable=False)
+    fact_id: Mapped[str | None] = mapped_column(ForeignKey("patient_context_facts.fact_id"))
+    rule_key: Mapped[str] = mapped_column(String(80), nullable=False)
+    rule_version: Mapped[str] = mapped_column(String(40), nullable=False)
+    delta: Mapped[float] = mapped_column(Float, nullable=False)
+    explanation: Mapped[str] = mapped_column(String(240), nullable=False)
+    evaluated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class TimelineAnnotation(Base):
+    __tablename__ = "timeline_annotations"
+    annotation_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
+    author_id: Mapped[str] = mapped_column(ForeignKey("users.user_id"), nullable=False)
+    text: Mapped[str] = mapped_column(String(500), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    source_label: Mapped[str] = mapped_column(String(80), nullable=False)

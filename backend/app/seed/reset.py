@@ -9,9 +9,13 @@ from backend.app.persistence.models import (
     Bed,
     Configuration,
     History,
+    HistorianRuleEvaluation,
+    HistorianRuleDefinition,
     Nurse,
     Patient,
+    PatientContextFact,
     PredictionEvidence,
+    TimelineAnnotation,
     User,
     VitalObservation,
 )
@@ -19,6 +23,10 @@ from backend.app.persistence.models import (
 
 def reset_demo_data(session: Session) -> None:
     for model in (
+        TimelineAnnotation,
+        HistorianRuleEvaluation,
+        HistorianRuleDefinition,
+        PatientContextFact,
         AlertEvent,
         AuditEvent,
         Alert,
