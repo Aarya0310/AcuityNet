@@ -39,8 +39,8 @@
 - [x] **HIST-01**: An authorized Doctor can retrieve P-1042's demographics, admission, bed, diagnoses, medications, labs, and previous ICU events.
 - [x] **HIST-02**: The Medical Historian displays baseline risk separately from contextual risk and identifies the patient context used to derive the difference.
 - [x] **HIST-03**: The Medical Historian lists each configurable research-rule adjustment with its explanation and delta, and labels the result as a prototype explanation rather than a validated clinical weight.
-- [ ] **HIST-04**: A Doctor can review P-1042's current vitals, prediction, history, alert evidence, explanation, and clinical notes without receiving Admin controls or Nurse-only mutations.
-- [ ] **HIST-05**: Authorized users can follow a chronological P-1042 timeline linking deterioration, predictions, contextual explanation, alert, dispatch, acknowledgement, response, and resolution.
+- [x] **HIST-04**: A Doctor can review P-1042's current vitals, prediction, history, alert evidence, explanation, and clinical notes without receiving Admin controls or Nurse-only mutations.
+- [x] **HIST-05**: Authorized users can follow a chronological P-1042 timeline linking deterioration, predictions, contextual explanation, alert, dispatch, acknowledgement, response, and resolution.
 
 ### Tactical Dispatch and Nurse Workflow
 
@@ -137,8 +137,8 @@
 | HIST-01 | Phase 4 | Complete |
 | HIST-02 | Phase 4 | Complete |
 | HIST-03 | Phase 4 | Complete |
-| HIST-04 | Phase 4 | Pending |
-| HIST-05 | Phase 4 | Pending |
+| HIST-04 | Phase 4 | Complete |
+| HIST-05 | Phase 4 | Complete |
 | DISP-01 | Phase 4 | Pending |
 | DISP-02 | Phase 4 | Pending |
 | DISP-03 | Phase 4 | Pending |
