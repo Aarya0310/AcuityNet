@@ -53,6 +53,7 @@ describe("HistorianPage", () => {
     expect(screen.getByText("Fictional respiratory condition")).toBeInTheDocument();
     expect(screen.getByText("Baseline score")).toBeInTheDocument();
     expect(screen.getByText("0.40")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Research rules and explanation"));
     expect(screen.getByText("Respiratory history")).toBeInTheDocument();
     expect(screen.getAllByText("Simulated ICU environment - research prototype - not for clinical use")).toHaveLength(2);
     expect(screen.getByRole("heading", { name: "Evidence timeline" })).toBeInTheDocument();
@@ -72,5 +73,21 @@ describe("HistorianPage", () => {
     expect(screen.getByText("lab: required evidence missing")).toBeInTheDocument();
     expect(screen.getByText("Unavailable")).toBeInTheDocument();
     expect(screen.queryByText("0.40")).not.toBeInTheDocument();
+  });
+
+  it("keeps research rules collapsed until disclosed and bounds annotation input", async () => {
+    vi.stubGlobal("fetch", vi.fn(() => Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(historian) })));
+    renderPage();
+    expect(await screen.findByText("Mara Chen")).toBeInTheDocument();
+    const disclosure = screen.getByText("Research rules and explanation");
+    expect(disclosure).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByText("Diagnosis context adjustment")).not.toBeInTheDocument();
+    fireEvent.click(disclosure);
+    expect(disclosure).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText("Diagnosis context adjustment")).toBeInTheDocument();
+    expect(screen.getByLabelText("Add a concise note")).toHaveAttribute("maxLength", "500");
+    expect(screen.getByRole("button", { name: "Add annotation" })).toBeDisabled();
+    fireEvent.change(screen.getByLabelText("Add a concise note"), { target: { value: "   " } });
+    expect(screen.getByRole("button", { name: "Add annotation" })).toBeDisabled();
   });
 });
