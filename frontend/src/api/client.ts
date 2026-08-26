@@ -2,6 +2,7 @@ import type { VitalObservation } from "../contracts/vitals";
 import type { AutomaticRefreshInterval, RefreshConfiguration } from "../contracts/configuration";
 import type { Prediction } from "../contracts/predictions";
 import type { Alert, AlertEvent, AuditEvent } from "../contracts/alerts";
+import type { Annotation, HistorianResponse } from "../contracts/historian";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
 let accessToken: string | null = localStorage.getItem("acuitynet.access_token");
@@ -23,6 +24,14 @@ export async function getCurrentUser(): Promise<AuthUser> { return getJson<AuthU
 export async function logout(): Promise<void> { try { await getJson<void>("/api/v1/auth/logout", { method: "POST" }); } finally { clearSession(); } }
 export function getPrediction(patientId: string): Promise<Prediction> { return getJson<Prediction>(`/api/v1/patients/${encodeURIComponent(patientId)}/prediction`); }
 export function getCurrentAlert(patientId: string): Promise<Alert | null> { return getJson<Alert | null>(`/api/v1/patients/${encodeURIComponent(patientId)}/alert`); }
+export function getHistorian(patientId: string): Promise<HistorianResponse> { return getJson<HistorianResponse>(`/api/v1/patients/${encodeURIComponent(patientId)}/historian`); }
+export function createHistorianAnnotation(patientId: string, text: string): Promise<Annotation> {
+  return getJson<Annotation>(`/api/v1/patients/${encodeURIComponent(patientId)}/annotations`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+  });
+}
 export function getAlertEvents(patientId: string): Promise<AlertEvent[]> { return getJson<AlertEvent[]>(`/api/v1/patients/${encodeURIComponent(patientId)}/alert/events`); }
 export async function getAlertAudit(patientId: string): Promise<AuditEvent[]> {
   const result = await getJson<{ events: AuditEvent[] }>(`/api/v1/patients/${encodeURIComponent(patientId)}/audit`);
