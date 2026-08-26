@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -45,6 +45,14 @@ class Nurse(Base):
     display_name: Mapped[str] = mapped_column(String(120), nullable=False)
     available: Mapped[bool] = mapped_column(Boolean, nullable=False)
     user_id: Mapped[str | None] = mapped_column(ForeignKey("users.user_id"), unique=True)
+    status_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    workload_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    proximity_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    acuity_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    proximity_km: Mapped[float | None] = mapped_column(Float)
+    workload_active: Mapped[int | None] = mapped_column(Integer)
+    workload_capacity: Mapped[int | None] = mapped_column(Integer)
+    acuity_compatibility: Mapped[float | None] = mapped_column(Float)
     user: Mapped[User | None] = relationship(back_populates="nurse")
 
 
@@ -192,3 +200,35 @@ class TimelineAnnotation(Base):
     text: Mapped[str] = mapped_column(String(500), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     source_label: Mapped[str] = mapped_column(String(80), nullable=False)
+
+
+class DispatchEvaluation(Base):
+    __tablename__ = "dispatch_evaluations"
+    evaluation_id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("patients.patient_id"), nullable=False)
+    alert_id: Mapped[int] = mapped_column(ForeignKey("alerts.alert_id"), nullable=False)
+    evidence_id: Mapped[int] = mapped_column(ForeignKey("prediction_evidence.evidence_id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    alert_fresh_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    candidate_fresh_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    recommendation_nurse_id: Mapped[str | None] = mapped_column(String(32))
+    weights: Mapped[str] = mapped_column(Text, nullable=False)
+    candidates: Mapped[str] = mapped_column(Text, nullable=False)
+    exclusions: Mapped[str] = mapped_column(Text, nullable=False)
+    source_fingerprint: Mapped[str] = mapped_column(String(120), nullable=False)
+    recommendation_context: Mapped[str] = mapped_column(String(240), nullable=False)
+    prototype_label: Mapped[str] = mapped_column(String(160), nullable=False)
+
+
+class DispatchDecision(Base):
+    __tablename__ = "dispatch_decisions"
+    decision_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    evaluation_id: Mapped[str] = mapped_column(ForeignKey("dispatch_evaluations.evaluation_id"), nullable=False)
+    alert_id: Mapped[int] = mapped_column(ForeignKey("alerts.alert_id"), nullable=False)
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.user_id"), nullable=False)
+    decision_type: Mapped[str] = mapped_column(String(16), nullable=False)
+    selected_nurse_id: Mapped[str] = mapped_column(String(32), nullable=False)
+    reason: Mapped[str] = mapped_column(String(240), nullable=False)
+    evidence: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

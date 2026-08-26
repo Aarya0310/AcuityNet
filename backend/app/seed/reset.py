@@ -8,6 +8,8 @@ from backend.app.persistence.models import (
     AuditEvent,
     Bed,
     Configuration,
+    DispatchDecision,
+    DispatchEvaluation,
     History,
     HistorianRuleEvaluation,
     HistorianRuleDefinition,
@@ -24,6 +26,8 @@ from backend.app.persistence.models import (
 def reset_demo_data(session: Session) -> None:
     for model in (
         TimelineAnnotation,
+        DispatchDecision,
+        DispatchEvaluation,
         HistorianRuleEvaluation,
         HistorianRuleDefinition,
         PatientContextFact,

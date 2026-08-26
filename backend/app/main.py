@@ -42,6 +42,8 @@ from backend.app.auth.service import load_token_user
 from backend.app.transport.realtime import realtime_router
 from backend.app.historian.service import HistorianService
 from backend.app.transport.historian import historian_router
+from backend.app.dispatch.service import DispatchService
+from backend.app.transport.dispatch import dispatch_router
 
 
 def create_app(
@@ -60,6 +62,7 @@ def create_app(
     publisher = RealtimePublisher()
     alert_service = AlertService(PredictionAdapter(), now, audit_service, publisher)
     lifecycle_service = AlertLifecycleService(now, audit_service, publisher)
+    dispatch_service = DispatchService(now, lifecycle_service, alert_service, audit_service)
 
     app = FastAPI(title="AcuityNet Research Prototype")
     app.include_router(auth_router(sessions))
@@ -137,6 +140,7 @@ def create_app(
     app.include_router(audit_router(sessions, current_user))
     app.include_router(realtime_router(sessions, publisher))
     app.include_router(historian_router(sessions, current_user, HistorianService(now, alert_service, audit_service)))
+    app.include_router(dispatch_router(sessions, current_user, dispatch_service, alert_service))
     app.state.realtime_publisher = publisher
 
     @app.get("/health", response_model=HealthResponse)

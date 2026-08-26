@@ -35,12 +35,15 @@ def seed_demo_data(session: Session) -> None:
     else:
         patient.display_name = "Fictional Patient 1042"
     session.flush()
+    context_at = datetime(2026, 1, 1, tzinfo=timezone.utc)
     values = [
         (Bed, "ICU-12", {"unit": "ICU", "patient_id": "P-1042"}),
         (Nurse, "N-SARAH", {"display_name": "Sarah Morgan", "available": True, "user_id": "U-SARAH"}),
         (History, "H-P-1042", {"patient_id": "P-1042", "summary": "Fictional demonstration history."}),
     ]
     for model, identifier, fields in values:
+        if model is Nurse:
+            fields = fields | {"status_updated_at": context_at, "workload_updated_at": context_at, "proximity_updated_at": context_at, "acuity_updated_at": context_at, "proximity_km": 0.90, "workload_active": 1, "workload_capacity": 4, "acuity_compatibility": 1.00}
         key = "bed_id" if model is Bed else "nurse_id" if model is Nurse else "history_id"
         row = session.get(model, identifier)
         if row is None:
@@ -55,13 +58,12 @@ def seed_demo_data(session: Session) -> None:
     else:
         admission.patient_id = "P-1042"
         admission.admitted_at = datetime(2026, 1, 1, tzinfo=timezone.utc)
-    for key, value in {"freshness_fresh_seconds": "15", "freshness_stale_seconds": "60", "refresh_intervals": "5,10,30,manual", "historian_context_fresh_seconds": "86400"}.items():
+    for key, value in {"freshness_fresh_seconds": "15", "freshness_stale_seconds": "60", "refresh_intervals": "5,10,30,manual", "historian_context_fresh_seconds": "86400", "dispatch_status_fresh_seconds": "60", "dispatch_workload_fresh_seconds": "60", "dispatch_proximity_fresh_seconds": "300", "dispatch_alert_fresh_seconds": "300"}.items():
         configuration = session.get(Configuration, key)
         if configuration is None:
             session.add(Configuration(key=key, value=value))
         else:
             configuration.value = value
-    context_at = datetime(2026, 1, 1, tzinfo=timezone.utc)
     facts = [
         ("D-P1042-01", "diagnosis", "fictional chronic respiratory condition", None, None),
         ("M-P1042-01", "medication", "fictional inhaled support", None, None),
