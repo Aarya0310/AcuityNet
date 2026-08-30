@@ -40,6 +40,11 @@ def test_full_seed_has_stable_p1042_aggregate(tmp_path):
             "freshness_fresh_seconds": "15",
             "freshness_stale_seconds": "60",
             "refresh_intervals": "5,10,30,manual",
+            "historian_context_fresh_seconds": "86400",
+            "dispatch_status_fresh_seconds": "60",
+            "dispatch_workload_fresh_seconds": "60",
+            "dispatch_proximity_fresh_seconds": "300",
+            "dispatch_alert_fresh_seconds": "300",
         }
         assert aggregate_counts(session) == {
             "patients": 1,
@@ -47,7 +52,7 @@ def test_full_seed_has_stable_p1042_aggregate(tmp_path):
             "beds": 1,
             "nurses": 1,
             "histories": 1,
-            "configurations": 3,
+            "configurations": 8,
             "vital_observations": 0,
         }
 
@@ -76,7 +81,7 @@ def test_reset_then_reseed_and_repeated_seed_preserve_graph(tmp_path):
             "beds": 1,
             "nurses": 1,
             "histories": 1,
-            "configurations": 3,
+            "configurations": 8,
             "vital_observations": 0,
         }
         assert {

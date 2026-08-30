@@ -184,7 +184,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Identity, Authorization, and Prediction Adapter | 8/8 | Executed with verification blockers | 2026-08-24 |
 | 3. Monitoring, Alerts, Lifecycle, and Audit | 4/4 | Complete | 2026-08-24 |
 | 4. Medical Historian and Human-Confirmed Dispatch | 6/6 | Complete | 2026-08-30 |
-| 5. End-to-End Verification and Demo Hardening | 5/5 | Planning complete | - |
+| 5. End-to-End Verification and Demo Hardening | 0/TBD | Not started | - |
 
 ## Coverage Summary
 

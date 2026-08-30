@@ -23,13 +23,20 @@ def test_empty_database_migrates_and_writes_bounded_synthetic_observation(tmp_pa
     app = create_app(database_url)
 
     with TestClient(app) as client:
+        admin_token = client.post(
+            "/api/v1/auth/login",
+            json={"username": "admin", "password": "admin-password"},
+        ).json()["access_token"]
+        headers = {"Authorization": f"Bearer {admin_token}"}
+
         response = client.post(
             "/api/v1/patients/P-1042/vitals/advance",
             json={"tick": 0},
+            headers=headers,
         )
         assert response.status_code == 200
 
-        observation = client.get("/api/v1/patients/P-1042/vitals/current")
+        observation = client.get("/api/v1/patients/P-1042/vitals/current", headers=headers)
 
     assert observation.status_code == 200
     payload = observation.json()
@@ -63,7 +70,7 @@ def test_empty_database_migrates_and_writes_bounded_synthetic_observation(tmp_pa
         assert session.scalar(select(func.count()).select_from(Bed)) == 1
         assert session.scalar(select(func.count()).select_from(Nurse)) == 1
         assert session.scalar(select(func.count()).select_from(History)) == 1
-        assert session.scalar(select(func.count()).select_from(Configuration)) == 3
+        assert session.scalar(select(func.count()).select_from(Configuration)) == 8
         assert session.scalar(select(func.count()).select_from(VitalObservation)) == 1
 
 
@@ -72,13 +79,21 @@ def test_fixture_setup_is_idempotent(tmp_path):
     app = create_app(database_url)
 
     with TestClient(app) as client:
+        admin_token = client.post(
+            "/api/v1/auth/login",
+            json={"username": "admin", "password": "admin-password"},
+        ).json()["access_token"]
+        headers = {"Authorization": f"Bearer {admin_token}"}
+
         first = client.post(
             "/api/v1/patients/P-1042/vitals/advance",
             json={"tick": 0},
+            headers=headers,
         )
         second = client.post(
             "/api/v1/patients/P-1042/vitals/advance",
             json={"tick": 0},
+            headers=headers,
         )
 
     assert first.status_code == 200
@@ -111,4 +126,9 @@ def test_direct_seed_setup_is_idempotent_and_has_resolved_configuration(tmp_path
             "freshness_fresh_seconds": "15",
             "freshness_stale_seconds": "60",
             "refresh_intervals": "5,10,30,manual",
+            "historian_context_fresh_seconds": "86400",
+            "dispatch_status_fresh_seconds": "60",
+            "dispatch_workload_fresh_seconds": "60",
+            "dispatch_proximity_fresh_seconds": "300",
+            "dispatch_alert_fresh_seconds": "300",
         }

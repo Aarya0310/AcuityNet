@@ -66,6 +66,12 @@ def create_app(
     dispatch_service = DispatchService(now, lifecycle_service, alert_service, audit_service)
 
     app = FastAPI(title="AcuityNet Research Prototype")
+    app.state.engine = engine
+
+    @app.on_event("shutdown")
+    def shutdown_app() -> None:
+        engine.dispose()
+
     app.include_router(auth_router(sessions))
     current_user = get_current_user(sessions)
     app.add_middleware(
