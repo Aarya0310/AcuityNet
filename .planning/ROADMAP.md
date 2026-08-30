@@ -122,15 +122,15 @@ Plans:
   5. The assigned Nurse can see only assigned work, then acknowledge the alert, record a response note, and resolve it; an unassigned Nurse cannot mutate or inspect outside the permitted assignment scope.
 
 **Rationale**: Historian context and dispatch require stable predictions and alert acuity; human confirmation and assignment-scoped nurse actions preserve the project's non-autonomous safety boundary.
-**Plans**: 3/6 plans executed
+**Plans**: 6/6 plans complete
 Plans:
 
 - [x] 04-01-PLAN.md - Historian persistence, deterministic context rules, and protected REST projection
 - [x] 04-02-PLAN.md - Historian and Doctor evidence-timeline interface
 - [x] 04-03-PLAN.md - Dispatch persistence, eligibility ranking, and human confirmation
-- [ ] 04-04-PLAN.md - Admin/Doctor dispatch comparison and decision controls
-- [ ] 04-05-PLAN.md - Assignment-scoped Nurse workflow and lifecycle actions
-- [ ] 04-06-PLAN.md - Phase 4 reset, migration coverage, and isolated E2E replay
+- [x] 04-04-PLAN.md - Admin/Doctor dispatch comparison and decision controls
+- [x] 04-05-PLAN.md - Assignment-scoped Nurse workflow and lifecycle actions
+- [x] 04-06-PLAN.md - Phase 4 reset, migration coverage, and isolated E2E replay
 
 Requirement ownership:
 
@@ -157,7 +157,20 @@ Requirement ownership:
   4. A final content and workflow review confirms that the demo proves integration and traceability only, with no clinical diagnosis, treatment advice, validated-risk claim, or autonomous staffing command.
 
 **Rationale**: The prototype earns credibility through reproducible workflow evidence and explicit degraded-state behavior, not through demo polish or implied model validation.
-**Plans**: TBD
+**Plans**: 5/5 plans created
+Plans:
+
+- [ ] 05-01-PLAN.md — Tracer: End-to-end P-1042 journey in Playwright (login → workflow → resolution)
+- [ ] 05-02-PLAN.md — Backend tests: Reset idempotence, degraded states, full journey replay
+- [ ] 05-03-PLAN.md — Frontend tests: Component-level (monitoring, alerts, historian, dispatch), WebSocket hook
+- [ ] 05-04-PLAN.md — E2E browser tests: Role workflows, degraded states, WebSocket recovery, concurrency
+- [ ] 05-05-PLAN.md — Documentation: DEMO-RESET-PATH.md, VERIFICATION-CHECKLIST.md, README, setup
+
+Requirement ownership:
+
+- TEST-01 (automated backend/frontend/browser coverage): 05-01, 05-02, 05-03, 05-04
+- TEST-02 (documented clean setup and reset path): 05-01, 05-05
+
 **UI hint**: yes
 
 ## Progress
@@ -170,8 +183,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Safety, Simulation, and Backend Contracts | 6/6 | Complete    | 2026-08-24 |
 | 2. Identity, Authorization, and Prediction Adapter | 8/8 | Executed with verification blockers | 2026-08-24 |
 | 3. Monitoring, Alerts, Lifecycle, and Audit | 4/4 | Complete | 2026-08-24 |
-| 4. Medical Historian and Human-Confirmed Dispatch | 3/6 | In Progress|  |
-| 5. End-to-End Verification and Demo Hardening | 0/TBD | Not started | - |
+| 4. Medical Historian and Human-Confirmed Dispatch | 6/6 | Complete | 2026-08-30 |
+| 5. End-to-End Verification and Demo Hardening | 5/5 | Planning complete | - |
 
 ## Coverage Summary
 
