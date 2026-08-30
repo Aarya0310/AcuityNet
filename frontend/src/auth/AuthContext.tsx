@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import { clearSession, getCurrentUser, login, logout, type AuthUser } from "../api/client";
 
 type AuthState = { user: AuthUser | null; loading: boolean; error: string | null; signIn: (username: string, password: string) => Promise<void>; signOut: () => Promise<void> };
-const AuthContext = createContext<AuthState | null>(null);
+export const AuthContext = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null); const [loading, setLoading] = useState(true); const [error, setError] = useState<string | null>(null);
   useEffect(() => { getCurrentUser().then(setUser).catch(() => { clearSession(); setUser(null); }).finally(() => setLoading(false)); }, []);

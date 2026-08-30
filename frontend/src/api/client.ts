@@ -3,6 +3,7 @@ import type { AutomaticRefreshInterval, RefreshConfiguration } from "../contract
 import type { Prediction } from "../contracts/predictions";
 import type { Alert, AlertEvent, AuditEvent } from "../contracts/alerts";
 import type { Annotation, HistorianResponse } from "../contracts/historian";
+import type { DispatchDecisionRequest, DispatchEvaluationResponse } from "../contracts/dispatch";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
 let accessToken: string | null = localStorage.getItem("acuitynet.access_token");
@@ -36,6 +37,26 @@ export function getAlertEvents(patientId: string): Promise<AlertEvent[]> { retur
 export async function getAlertAudit(patientId: string): Promise<AuditEvent[]> {
   const result = await getJson<{ events: AuditEvent[] }>(`/api/v1/patients/${encodeURIComponent(patientId)}/audit`);
   return result.events;
+}
+export function getDispatchEvaluation(patientId: string): Promise<DispatchEvaluationResponse> {
+  return getJson<DispatchEvaluationResponse>(`/api/v1/patients/${encodeURIComponent(patientId)}/dispatch/evaluation`);
+}
+export function postDispatchRetry(patientId: string): Promise<DispatchEvaluationResponse> {
+  return getJson<DispatchEvaluationResponse>(`/api/v1/patients/${encodeURIComponent(patientId)}/dispatch/retry`, { method: "POST" });
+}
+export function postDispatchConfirm(patientId: string, request: DispatchDecisionRequest): Promise<Alert> {
+  return getJson<Alert>(`/api/v1/patients/${encodeURIComponent(patientId)}/dispatch/confirm`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+}
+export function postDispatchOverride(patientId: string, request: DispatchDecisionRequest): Promise<Alert> {
+  return getJson<Alert>(`/api/v1/patients/${encodeURIComponent(patientId)}/dispatch/override`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
 }
 export function getAccessToken(): string | null { return accessToken ?? localStorage.getItem("acuitynet.access_token"); }
 export function realtimeUrl(patientId: string): string {

@@ -1,3 +1,7 @@
 import { AdminKpiView } from "../admin/AdminKpiView";
 import { AdminManagementView } from "../admin/AdminManagementView";
-export function AdminDashboardView() { return <><AdminKpiView /><AdminManagementView /></>; }
+import { DispatchPage } from "../dispatch/DispatchPage";
+
+export function AdminDashboardView() {
+  return <><AdminKpiView /><AdminManagementView /><DispatchPage /></>;
+}
