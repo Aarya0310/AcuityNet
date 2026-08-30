@@ -4,6 +4,7 @@ import type { Prediction } from "../contracts/predictions";
 import type { Alert, AlertEvent, AuditEvent } from "../contracts/alerts";
 import type { Annotation, HistorianResponse } from "../contracts/historian";
 import type { DispatchDecisionRequest, DispatchEvaluationResponse } from "../contracts/dispatch";
+import type { NurseLifecycleAction, NurseWorkResponse } from "../contracts/nurse";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
 let accessToken: string | null = localStorage.getItem("acuitynet.access_token");
@@ -56,6 +57,16 @@ export function postDispatchOverride(patientId: string, request: DispatchDecisio
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(request),
+  });
+}
+export function getNurseWork(patientId: string): Promise<NurseWorkResponse> {
+  return getJson<NurseWorkResponse>(`/api/v1/patients/${encodeURIComponent(patientId)}/nurse/work`);
+}
+export function postNurseLifecycleAction(patientId: string, action: NurseLifecycleAction, note?: string): Promise<Alert> {
+  return getJson<Alert>(`/api/v1/patients/${encodeURIComponent(patientId)}/alert/lifecycle`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action, ...(note ? { note } : {}) }),
   });
 }
 export function getAccessToken(): string | null { return accessToken ?? localStorage.getItem("acuitynet.access_token"); }

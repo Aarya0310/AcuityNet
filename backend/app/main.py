@@ -44,6 +44,7 @@ from backend.app.historian.service import HistorianService
 from backend.app.transport.historian import historian_router
 from backend.app.dispatch.service import DispatchService
 from backend.app.transport.dispatch import dispatch_router
+from backend.app.transport.nurse import nurse_router
 
 
 def create_app(
@@ -141,6 +142,7 @@ def create_app(
     app.include_router(realtime_router(sessions, publisher))
     app.include_router(historian_router(sessions, current_user, HistorianService(now, alert_service, audit_service)))
     app.include_router(dispatch_router(sessions, current_user, dispatch_service, alert_service))
+    app.include_router(nurse_router(sessions, current_user, alert_service, lifecycle_service))
     app.state.realtime_publisher = publisher
 
     @app.get("/health", response_model=HealthResponse)

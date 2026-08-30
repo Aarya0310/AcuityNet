@@ -3,17 +3,17 @@ gsd_state_version: 1.0
 current_phase: 04
 current_phase_name: Medical Historian and Human-Confirmed Dispatch
 status: executing
-stopped_at: Completed 04-04-PLAN.md
-last_updated: "2026-08-30T16:25:00.000Z"
+stopped_at: Completed 04-05-PLAN.md - Assignment-scoped Nurse workflow
+last_updated: "2026-08-30T18:00:00.000Z"
 last_activity: 2026-08-30
-last_activity_desc: Phase 04 Plan 04 completed - dispatch review UI implemented
-state_head: 2ccc749
+last_activity_desc: Phase 04-05 completed - Nurse assignment workflow, lifecycle actions, dispatch staleness fix
+state_head: pending-commit
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 24
-  completed_plans: 22
-  percent: 92
+  completed_plans: 23
+  percent: 96
 ---
 
 # Project State

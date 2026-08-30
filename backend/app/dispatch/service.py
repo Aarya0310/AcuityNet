@@ -200,5 +200,11 @@ class DispatchService:
     def evaluate_inputs(self, session, alert, evidence):
         now = self._utc(self.clock())
         settings = self._settings(session)
-        candidates = [self._candidate_data(session, nurse, now, settings) for nurse in session.scalars(select(Nurse).order_by(Nurse.nurse_id))]
-        return self._source_fingerprint(alert, evidence, [item for item in sorted(candidates, key=lambda item: item["nurse_id"])])
+        all_candidates = [self._candidate_data(session, nurse, now, settings) for nurse in session.scalars(select(Nurse).order_by(Nurse.nurse_id))]
+        eligible = [item for item in all_candidates if item["eligible"]]
+        eligible.sort(key=lambda item: (-item["score"], -item["components"]["availability"], -item["components"]["proximity"], -item["components"]["workload"], -item["components"]["acuity_compatibility"], item["nurse_id"]))
+        for rank, item in enumerate(eligible, start=1):
+            item["rank"] = rank
+        exclusions = [item for item in all_candidates if not item["eligible"]]
+        snapshot_candidates = sorted(eligible + exclusions, key=lambda item: item["nurse_id"])
+        return self._source_fingerprint(alert, evidence, snapshot_candidates)

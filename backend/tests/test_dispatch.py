@@ -25,7 +25,9 @@ def make_dispatch_client(tmp_path):
 
 
 def create_alert(client, admin):
-    for tick in range(4):
+    assert client.post("/api/v1/patients/P-1042/vitals/advance", json={"tick": 0}, headers=admin).status_code == 200
+    assert client.patch("/api/v1/admin/configuration/risk-thresholds", json={"critical_risk_threshold": 0.2, "high_risk_threshold": 0.15}, headers=admin).status_code == 200
+    for tick in range(1, 4):
         assert client.post("/api/v1/patients/P-1042/vitals/advance", json={"tick": tick}, headers=admin).status_code == 200
 
 
@@ -40,7 +42,7 @@ def test_evaluation_is_ranked_and_confirm_delegates_to_lifecycle(tmp_path):
     assert body["recommendation_nurse_id"] == "N-SARAH"
     assert body["weights"] == {"acuity_compatibility": 0.1, "availability": 0.4, "proximity": 0.3, "workload": 0.2}
     candidate = body["candidates"][0]
-    assert candidate["score"] == 0.93
+    assert candidate["score"] == 0.92
     assert candidate["components"] == {"availability": 1.0, "proximity": 0.9, "workload": 0.75, "acuity_compatibility": 1.0}
 
     confirmed = client.post("/api/v1/patients/P-1042/dispatch/confirm", json={"evaluation_id": body["evaluation_id"], "nurse_id": "N-SARAH", "reason": "Doctor reviewed recommendation"}, headers=doctor)
@@ -76,8 +78,8 @@ def test_dispatch_tables_are_migrated_and_snapshots_are_immutable_rows(tmp_path)
 
 
 def test_nurse_is_denied_dispatch_evaluation_and_decision(tmp_path):
-    _database_url, client, _now, _admin, _doctor, nurse = make_dispatch_client(tmp_path)
-    create_alert(client, nurse)
+    _database_url, client, _now, admin, doctor, nurse = make_dispatch_client(tmp_path)
+    create_alert(client, admin)
 
     evaluation = client.get("/api/v1/patients/P-1042/dispatch/evaluation", headers=nurse)
     assert evaluation.status_code == 403
@@ -87,7 +89,8 @@ def test_nurse_is_denied_dispatch_evaluation_and_decision(tmp_path):
         headers=nurse,
     )
     assert decision.status_code == 403
-    assert client.get("/api/v1/patients/P-1042/alert", headers=nurse).json()["state"] == "generated"
+    assert client.get("/api/v1/patients/P-1042/alert", headers=doctor).json()["state"] == "generated"
+    client.close()
     client.close()
 
 

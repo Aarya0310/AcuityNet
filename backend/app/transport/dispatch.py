@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from backend.app.auth.policy import require_patient_access, require_roles
 from backend.app.contracts.alerts import AlertResponse
 from backend.app.contracts.dispatch import DispatchDecisionRequest, DispatchEvaluationResponse
+from backend.app.dispatch.service import DispatchConflict
 
 
 def dispatch_router(sessions, current_user, dispatch_service, alert_service):

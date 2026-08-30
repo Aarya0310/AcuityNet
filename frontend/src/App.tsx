@@ -23,5 +23,5 @@ function RoleApp() {
     return <MonitoringPage />;
   }
 
-  return <main><header><strong>{user?.display_name}</strong><span> {user?.role}</span></header>{user?.role === "admin" ? <AdminDashboardView /> : user?.role === "doctor" ? <DoctorDashboardView /> : <NurseDashboardView />}<MonitoringPage observation={query.data} freshnessOverride={query.data?.freshness ?? "unavailable"} /><AlertPage /></main>;
+  return <main><header><strong>{user?.display_name}</strong><span> {user?.role}</span></header>{user?.role === "admin" ? <AdminDashboardView /> : user?.role === "doctor" ? <DoctorDashboardView /> : <NurseDashboardView />}<MonitoringPage observation={query.data} freshnessOverride={query.data?.freshness ?? "unavailable"} />{user?.role !== "nurse" ? <AlertPage /> : null}</main>;
 }

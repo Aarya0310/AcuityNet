@@ -1,2 +1,2 @@
-import { MonitoringPage } from "../monitoring/MonitoringPage";
-export function NurseDashboardView() { return <MonitoringPage />; }
+import { NurseWorkPage } from "../nurse/NurseWorkPage";
+export function NurseDashboardView() { return <NurseWorkPage />; }
