@@ -3,18 +3,19 @@ gsd_state_version: 1.0
 current_phase: 05
 current_phase_name: End-to-End Verification and Demo Hardening
 status: execution-in-progress
-stopped_at: Phase 5-03 frontend component tests complete
-last_updated: "2026-08-30T23:00:00.000Z"
+stopped_at: Phase 5-04 E2E browser tests specification complete
+last_updated: "2026-08-30T23:15:00.000Z"
 last_activity: 2026-08-30
-last_activity_desc: "Phase 5-03 complete: 33 frontend tests passing (MonitoringPage, AlertPage, HistorianPage, DispatchPage, useAlertRealtime hook) + 3 backend tests = 36 Phase 5 tests total"
+last_activity_desc: "Phase 5-04 complete: E2E browser test suite created - 7 files (conftest, admin_reset, doctor_dispatch, nurse_response, degraded_states, websocket_recovery, concurrent_multiuser) with 20 test scenarios covering all 6 must-have requirements"
 state_head: execution-in-progress
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 24
   completed_plans: 24
-  active_subphase: "05-03-frontend-components-complete"
+  active_subphase: "05-04-e2e-browser-tests-complete"
   tests_passing: 36
+  e2e_tests_created: 20
   percent: 100
 ---
 
